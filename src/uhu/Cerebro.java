@@ -62,7 +62,8 @@ public class Cerebro {
 	 * @param percepcion Observacion del estado actual.
 	 */
 	public void analizarMapa(StateObservation percepcion) {
-		this.mapa.actualiza(percepcion,Visualizaciones.TODO);
+		this.mapa.actualiza(percepcion,Visualizaciones.BASICO);
+		
 	}
 
 	/**
@@ -72,7 +73,11 @@ public class Cerebro {
 	 */
 	public ACTIONS pensar() {
 
-//		return this.maquina.actualiza(this);
+		return null;
+	}
+	
+	public ACTIONS entrenar() {
+		
 		return null;
 	}
 
