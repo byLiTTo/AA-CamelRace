@@ -12,6 +12,8 @@ import tools.ElapsedCpuTimer;
  *
  */
 public class Agent extends AbstractPlayer {
+	
+	private Cerebro c;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -24,6 +26,7 @@ public class Agent extends AbstractPlayer {
 	 * @param elapsedTimer Temporizador para la creacion del controlador.
 	 */
 	public Agent(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
+		this.c = new Cerebro(percepcion);
 	}
 
 	// =============================================================================
@@ -40,7 +43,6 @@ public class Agent extends AbstractPlayer {
 	 */
 	public ACTIONS act(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 
-		Cerebro c = new Cerebro(percepcion);
 		c.analizarMapa(percepcion);
 		ACTIONS accion = c.pensar();
 
