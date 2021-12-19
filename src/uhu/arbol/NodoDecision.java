@@ -3,7 +3,7 @@
  */
 package uhu.arbol;
 
-import ontology.Types.ACTIONS;
+import static uhu.Constantes.*;
 import uhu.Cerebro;
 
 /**
@@ -13,7 +13,7 @@ import uhu.Cerebro;
 public abstract class NodoDecision implements Nodo {
 
 	@Override
-	public ACTIONS decidir(Cerebro c) {
+	public STATES decidir(Cerebro c) {
 		return null;
 	}
 

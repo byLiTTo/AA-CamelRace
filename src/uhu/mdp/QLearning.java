@@ -24,6 +24,8 @@ public class QLearning {
 		this.states = states;
 		this.actions = actions;
 
+		this.qTable = new double[states.size()][actions.size()];
+
 		File file = new File(path);
 		if (!file.exists()) {
 			initTable();
@@ -34,6 +36,7 @@ public class QLearning {
 		this.alpha = 0.9;
 		this.gamma = 0.5;
 		this.epsilon = 0.9;
+
 	}
 
 	public ACTIONS update(STATES lastState, ACTIONS lastAction, STATES currentState, double reward) {

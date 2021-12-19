@@ -58,10 +58,10 @@ public final class Constantes {
 //	}
 
 	public enum STATES {
-		CORRECT_PATH, WRONG_PATH
+		CAMINANDO, BLOQUEADO
 	}
 
 	public enum QUESTIONS {
-		CERCA_META
+		ACERCANDOSE, BLOQUEANDOSE
 	}
 }

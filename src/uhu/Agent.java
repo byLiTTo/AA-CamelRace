@@ -27,6 +27,7 @@ public class Agent extends AbstractPlayer {
 	 */
 	public Agent(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 		this.c = new Cerebro(percepcion);
+		System.out.println("Hola don pepito");
 	}
 
 	// =============================================================================

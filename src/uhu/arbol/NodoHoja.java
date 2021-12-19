@@ -3,8 +3,8 @@
  */
 package uhu.arbol;
 
-import ontology.Types.ACTIONS;
 import uhu.Cerebro;
+import static uhu.Constantes.*;
 
 /**
  * @author LiTTo
@@ -12,8 +12,22 @@ import uhu.Cerebro;
  */
 public abstract class NodoHoja extends NodoDecision {
 
+	private STATES state;
+
+	public NodoHoja(STATES s) {
+		this.state = s;
+	}
+
+	public STATES getState() {
+		return this.state;
+	}
+
+	public void setState(STATES s) {
+		this.state = s;
+	}
+
 	@Override
-	public ACTIONS decidir(Cerebro c) {
+	public STATES decidir(Cerebro c) {
 		return null;
 	}
 

@@ -3,7 +3,7 @@
  */
 package uhu.arbol;
 
-import ontology.Types.ACTIONS;
+import static uhu.Constantes.*;
 import uhu.Cerebro;
 
 /**
@@ -12,6 +12,6 @@ import uhu.Cerebro;
  */
 public abstract interface Nodo {
 
-	public ACTIONS decidir(Cerebro c);
+	public STATES decidir(Cerebro c);
 
 }

@@ -1,17 +1,13 @@
-package uhu.juego15;
+package uhu.juego15.preguntas;
 
-import java.util.ArrayList;
-
-import ontology.Types.ACTIONS;
+import static uhu.Constantes.*;
 import uhu.arbol.NodoLogico;
 import uhu.Cerebro;
-import uhu.Constantes;
-import uhu.grid.Casilla;
 import uhu.grid.Mapa;
 
-public class CercaMeta extends NodoLogico {
+public class AcercandoseMeta extends NodoLogico {
 	@Override
-	public ACTIONS decidir(Cerebro c) {
+	public STATES decidir(Cerebro c) {
 		Mapa mapa = c.getMapa();
 
 		int currentColumn = mapa.getAvatar().getX();
