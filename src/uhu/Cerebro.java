@@ -92,8 +92,17 @@ public class Cerebro {
 	}
 
 	private void actualizaState(StateObservation percepcion) {
+		System.out.println("Antes de actualizar");
+		System.out.println("lastState: " + lastState);
+		System.out.println("currentState: " + currentState);
+
 		this.lastState = this.currentState;
 		this.currentState = this.raiz.decidir(this);
+
+		System.out.println("Despues de actualizar");
+		System.out.println("lastState: " + lastState);
+		System.out.println("currentState: " + currentState);
+
 		if (currentState == null) {
 			System.out.println("Soy mongolito");
 		} else {
