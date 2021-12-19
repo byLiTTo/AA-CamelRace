@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import core.game.StateObservation;
 import ontology.Types.ACTIONS;
 import uhu.grid.*;
+import uhu.mdp.QLearning;
+
 import static uhu.Constantes.*;
 
 /**
@@ -22,6 +24,7 @@ public class Cerebro {
 	// =============================================================================
 
 	private Mapa mapa;
+	private QLearning qlearning;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -71,8 +74,8 @@ public class Cerebro {
 	 * 
 	 * @return Accion a realizar tras recorrer los nodos el arbol.
 	 */
-	public ACTIONS pensar(Integer lastState) {
-
+	public ACTIONS pensar() {
+//		Integer lastState
 		return null;
 	}
 	

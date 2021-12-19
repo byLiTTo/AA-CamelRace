@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import ontology.Types.ACTIONS;
+import static uhu.Constantes.*;
 
 public class QLearning {
 
@@ -47,10 +48,9 @@ public class QLearning {
 	}
 
 	private void initTable() {
-		Random rd = new Random();
 		for (int i = 0; i < states.size(); i++) {
 			for (int j = 0; j < actions.size(); j++) {
-				this.qTable[i][j] = rd.nextDouble();
+				this.qTable[i][j] = 0;
 			}
 		}
 	}
@@ -71,29 +71,42 @@ public class QLearning {
 
 	public double getMaxQValue(STATES state) {
 		int i = states.indexOf(state);
-		double[] fila = qTable[i];
+
 		double maxVal = Double.MIN_VALUE;
+
 		for (int j = 0; j < actions.size(); j++) {
 			if (qTable[i][j] > maxVal) {
 				maxVal = qTable[i][j];
 			}
 		}
+
 		return maxVal;
 	}
 
 	public ACTIONS getBestAction(STATES state) {
 		int i = states.indexOf(state);
-		double[] fila = qTable[i];
+
+		ArrayList<Integer> candidatos = new ArrayList<Integer>();
+
 		double maxVal = Double.MIN_VALUE;
 		int indexAction = 0;
+
 		for (int j = 0; j < actions.size(); j++) {
 			if (qTable[i][j] > maxVal) {
 				maxVal = qTable[i][j];
 				indexAction = j;
+				candidatos.clear();
+				candidatos.add(indexAction);
+			} else if (qTable[i][j] == maxVal) {
+				indexAction = j;
+				candidatos.add(indexAction);
 			}
 		}
-		return actions.get(indexAction);
 
+		Random rd = new Random(System.currentTimeMillis());
+		int seleccion = rd.nextInt(candidatos.size());
+
+		return actions.get(candidatos.get(seleccion));
 	}
 
 	public ACTIONS getRandomAction() {
@@ -108,6 +121,26 @@ public class QLearning {
 		this.epsilon = (0.9 * 100000 / (100000 + time));
 
 		time++;
+	}
+
+	public ACTIONS nextAction(STATES currentState) {
+		Random rd = new Random(System.currentTimeMillis());
+		double randomNumber = Math.abs(rd.nextDouble());
+
+		if (randomNumber < epsilon) {
+			return getRandomAction();
+		} else {
+			return getBestAction(currentState);
+		}
+	}
+
+	private double getReward(STATES lastState, ACTIONS lastAction, STATES currentState) {
+
+		return 0;
+	}
+
+	private void writeTable(String path) {
+		// TODO
 	}
 
 	private void readTable(String path) {
@@ -153,33 +186,23 @@ public class QLearning {
 //		return maxEval;
 //	}
 //	
-//	public ACTIONS getActionFromQValues(Estado state) {
-//		// Por defecto no hacemos nada
-//		ACTIONS bestAction = null;
-//		
-//		double maxEval = Double.MIN_VALUE;
-//		for action in getAviableActions(state) {
-//			if(getQValue(state, action) > maxEval) {
-//				maxEval = getQValue(state, action);
-//				// Añadir accion a array de acciones
-//			}else /* Si son iguales */ {
-//				// Añadir tambien al array de acciones
-//			}
-//		}
-//		// Devuelve una accion aleatoria dentro de las mejores
-//		return null;
-//	}
-//
-//	public ACTIONS nextAction(Estado currentState()) {
-//		Random rd = new Random();
-//		double randomNumber = Math.abs(rd.nextDouble());
-//		
-//		if(randomNumber < epsilon) {
-//			return getRandomAction();
-//		}else {
-//			return getBestAction(currentState());
-//		}
-//	}
+	public ACTIONS getActionFromQValues(Estado state) {
+		// Por defecto no hacemos nada
+		ACTIONS bestAction = null;
+		
+		double maxEval = Double.MIN_VALUE;
+		for action in getAviableActions(state) {
+			if(getQValue(state, action) > maxEval) {
+				maxEval = getQValue(state, action);
+				// Añadir accion a array de acciones
+			}else /* Si son iguales */ {
+				// Añadir tambien al array de acciones
+			}
+		}
+		// Devuelve una accion aleatoria dentro de las mejores
+		return null;
+	}
+// 
 //
 //	public ACTIONS getBestAction(Estado state) {
 //		

@@ -53,11 +53,11 @@ public final class Constantes {
 		NADA, MAPA, BASICO, CAMELLOS, TODO
 	}
 	
-	public enum Acciones{
-		UP, DOWN, LEFT, RIGHT
-	}
+//	public enum Acciones{
+//		UP, DOWN, LEFT, RIGHT
+//	}
 	
-	public enum Estados{
+	public enum STATES{
 		CORRECT_PATH, WRONG_PATH
 	}
 }

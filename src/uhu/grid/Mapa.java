@@ -159,24 +159,26 @@ public class Mapa {
 			setAvatarPosition(percepcion.getAvatarPosition());
 			asignaVecinos();
 			visualiza();
+			break;
 		}
 
-		ACTIONS a = percepcion.getAvatarLastAction();
-		switch (a) {
+		ACTIONS lastAction = percepcion.getAvatarLastAction();
+		switch (lastAction) {
 		case ACTION_UP:
-			this.avatarLastPosition.setY(this.avatar.getY() + 1);
-			break;
-		case ACTION_DOWN:
 			this.avatarLastPosition.setY(this.avatar.getY() - 1);
 			break;
+		case ACTION_DOWN:
+			this.avatarLastPosition.setY(this.avatar.getY() + 1);
+			break;
 		case ACTION_LEFT:
-			this.avatarLastPosition.setX(this.avatar.getX() - 1);
+			this.avatarLastPosition.setX(this.avatar.getX() + 1);
 			break;
 		case ACTION_RIGHT:
-			this.avatarLastPosition.setX(this.avatar.getX() + 1);
+			this.avatarLastPosition.setX(this.avatar.getX() - 1);
 			break;
 		default:
 			this.avatarLastPosition = this.avatar;
+			break;
 		}
 
 	}
