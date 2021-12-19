@@ -32,6 +32,7 @@ public class Mapa {
 
 	private Casilla avatar;
 	private Casilla avatarLastPosition;
+	private int columnaPortal;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -86,6 +87,14 @@ public class Mapa {
 	 */
 	public Casilla getAvatar() {
 		return this.avatar;
+	}
+
+	public Casilla getLastAvatar() {
+		return this.avatarLastPosition;
+	}
+
+	public int getColumnaPortal() {
+		return this.columnaPortal;
 	}
 
 	/**
@@ -231,8 +240,8 @@ public class Mapa {
 		if (portals != null) {
 			for (int i = 0; i < portals.length; i++) {
 				for (int j = 0; j < portals[i].size(); j++) {
-					int x = (int) Math.ceil(portals[i].get(j).position.x / this.bloque);
-					int y = (int) Math.ceil(portals[i].get(j).position.y / this.bloque);
+					int x = (int) portals[i].get(j).position.x / this.bloque;
+					int y = (int) portals[i].get(j).position.y / this.bloque;
 
 //					switch (portals[i].get(j).itype) {
 //					case Constantes.meta_tipo:
@@ -244,6 +253,7 @@ public class Mapa {
 //					}
 
 					this.tablero.get(x).get(y).setEstado(META);
+					this.columnaPortal = x;
 				}
 			}
 		}

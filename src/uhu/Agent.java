@@ -12,7 +12,7 @@ import tools.ElapsedCpuTimer;
  *
  */
 public class Agent extends AbstractPlayer {
-	
+
 	private Cerebro c;
 
 	// =============================================================================
@@ -43,8 +43,8 @@ public class Agent extends AbstractPlayer {
 	 */
 	public ACTIONS act(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 
-		c.analizarMapa(percepcion);
-		ACTIONS accion = c.pensar();
+		c.percibe(percepcion);
+		ACTIONS accion = c.pensar(percepcion);
 
 		return accion;
 	}

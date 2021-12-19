@@ -52,12 +52,16 @@ public final class Constantes {
 	public enum Visualizaciones {
 		NADA, MAPA, BASICO, CAMELLOS, TODO
 	}
-	
+
 //	public enum Acciones{
 //		UP, DOWN, LEFT, RIGHT
 //	}
-	
-	public enum STATES{
+
+	public enum STATES {
 		CORRECT_PATH, WRONG_PATH
+	}
+
+	public enum QUESTIONS {
+		CERCA_META
 	}
 }

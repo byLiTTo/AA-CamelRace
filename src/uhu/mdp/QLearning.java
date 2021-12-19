@@ -2,7 +2,6 @@ package uhu.mdp;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 import ontology.Types.ACTIONS;
@@ -14,6 +13,8 @@ public class QLearning {
 	private double gamma;
 	private double epsilon;
 	private int time = 0;
+
+	private double reward;
 
 	private ArrayList<STATES> states;
 	private ArrayList<ACTIONS> actions;
@@ -35,8 +36,8 @@ public class QLearning {
 		this.epsilon = 0.9;
 	}
 
-	public ACTIONS update(STATES lastState, ACTIONS lastAction, STATES currentState) {
-		double reward = getReward(lastState, lastAction, currentState);
+	public ACTIONS update(STATES lastState, ACTIONS lastAction, STATES currentState, double reward) {
+		this.reward = reward;
 		double sample = reward + gamma * getMaxQValue(currentState);
 		double newQValue = (1 - alpha) * getQValue(lastState, lastAction) + alpha * sample;
 
@@ -186,22 +187,22 @@ public class QLearning {
 //		return maxEval;
 //	}
 //	
-	public ACTIONS getActionFromQValues(Estado state) {
-		// Por defecto no hacemos nada
-		ACTIONS bestAction = null;
-		
-		double maxEval = Double.MIN_VALUE;
-		for action in getAviableActions(state) {
-			if(getQValue(state, action) > maxEval) {
-				maxEval = getQValue(state, action);
-				// Añadir accion a array de acciones
-			}else /* Si son iguales */ {
-				// Añadir tambien al array de acciones
-			}
-		}
-		// Devuelve una accion aleatoria dentro de las mejores
-		return null;
-	}
+//	public ACTIONS getActionFromQValues(Estado state) {
+//		// Por defecto no hacemos nada
+//		ACTIONS bestAction = null;
+//		
+//		double maxEval = Double.MIN_VALUE;
+//		for action in getAviableActions(state) {
+//			if(getQValue(state, action) > maxEval) {
+//				maxEval = getQValue(state, action);
+//				// Añadir accion a array de acciones
+//			}else /* Si son iguales */ {
+//				// Añadir tambien al array de acciones
+//			}
+//		}
+//		// Devuelve una accion aleatoria dentro de las mejores
+//		return null;
+//	}
 // 
 //
 //	public ACTIONS getBestAction(Estado state) {
