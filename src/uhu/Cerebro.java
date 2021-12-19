@@ -71,7 +71,7 @@ public class Cerebro {
 	 * 
 	 * @return Accion a realizar tras recorrer los nodos el arbol.
 	 */
-	public ACTIONS pensar() {
+	public ACTIONS pensar(Integer lastState) {
 
 		return null;
 	}

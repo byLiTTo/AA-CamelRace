@@ -52,4 +52,12 @@ public final class Constantes {
 	public enum Visualizaciones {
 		NADA, MAPA, BASICO, CAMELLOS, TODO
 	}
+	
+	public enum Acciones{
+		UP, DOWN, LEFT, RIGHT
+	}
+	
+	public enum Estados{
+		CORRECT_PATH, WRONG_PATH
+	}
 }

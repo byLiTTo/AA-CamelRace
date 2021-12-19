@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import core.game.Observation;
 import core.game.StateObservation;
+import ontology.Types.ACTIONS;
 import tools.Vector2d;
 
 import static uhu.Constantes.*;
@@ -30,6 +31,7 @@ public class Mapa {
 	private ArrayList<ArrayList<Casilla>> tablero;
 
 	private Casilla avatar;
+	private Casilla avatarLastPosition;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -52,7 +54,7 @@ public class Mapa {
 
 		this.avatar = new Casilla();
 
-		actualiza(percepcion,Visualizaciones.NADA);
+		actualiza(percepcion, Visualizaciones.NADA);
 	}
 
 	// =============================================================================
@@ -157,6 +159,24 @@ public class Mapa {
 			setAvatarPosition(percepcion.getAvatarPosition());
 			asignaVecinos();
 			visualiza();
+		}
+
+		ACTIONS a = percepcion.getAvatarLastAction();
+		switch (a) {
+		case ACTION_UP:
+			this.avatarLastPosition.setY(this.avatar.getY() + 1);
+			break;
+		case ACTION_DOWN:
+			this.avatarLastPosition.setY(this.avatar.getY() - 1);
+			break;
+		case ACTION_LEFT:
+			this.avatarLastPosition.setX(this.avatar.getX() - 1);
+			break;
+		case ACTION_RIGHT:
+			this.avatarLastPosition.setX(this.avatar.getX() + 1);
+			break;
+		default:
+			this.avatarLastPosition = this.avatar;
 		}
 
 	}
