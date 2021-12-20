@@ -1,5 +1,7 @@
 package tracks.singlePlayer;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 import core.logging.Logger;
@@ -109,39 +111,64 @@ public class Test {
 //		}
 
 		// 8.
-		double totalPuntos = 0;
-        double puntos[] = new double[5];
-        double victorias[] = new double[5];
-        int numVictorias = 0;
+//		double totalPuntos = 0;
+//        double puntos[] = new double[5];
+//        double victorias[] = new double[5];
+//        int numVictorias = 0;
+//
+//        for(int i=0;i<5;i++) {
+//            puntos[i] = 0;
+//            victorias[i] = 0;
+//        }
+//
+//        for(int i=0;i<1;i++) {
+//            levelIdx = 7;
+//            level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
+//            for(int j=0;j<10;j++) {
+//                double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile, seed, 0);
+//                //resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos - resultado[2] -> ticks
+//                totalPuntos = totalPuntos + resultado[1];
+//                puntos[i] = puntos[i] + resultado[1];
+//
+//                if(resultado[0] == 1) {
+//                    numVictorias++;
+//                    victorias[i]++;
+//                }
+//            }
+//        }
+//
+//        //Resultados por nivel
+//        for(int i=0;i<5;i++) {
+//            System.out.println("Nivel: " + (i+1) + " - Victorias: " + (int)victorias[i] + " - Media de Puntos: " + puntos[i]/10);
+//        }
+//
+//        //Resultados totales
+//        System.out.println("Numero Total de Victorias: " + numVictorias + " -- Media Total de Puntos: " + totalPuntos/50);
 
-        for(int i=0;i<5;i++) {
-            puntos[i] = 0;
-            victorias[i] = 0;
-        }
+		String path = "resultados.csv";
+		int M = 2; // Número de partidas
+		String[] arrayResult = new String[M + 1];
+		arrayResult[0] = "Partida,Ticks\n";
+		Double[] arrayTicks = new Double[M];
+		for (int i = 0; i < M + 1; i++) {
+			double[] resultado = ArcadeMachine.runOneGame(game, level1, false, sampleMDPController, recordActionsFile,
+					seed, 0);
+			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
+			// resultado[2] -> ticks
+			arrayResult[i + 1] = i + "," + resultado[2] + "\n";
+		}
 
-        for(int i=0;i<1;i++) {
-            levelIdx = 7;
-            level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
-            for(int j=0;j<10;j++) {
-                double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile, seed, 0);
-                //resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos - resultado[2] -> ticks
-                totalPuntos = totalPuntos + resultado[1];
-                puntos[i] = puntos[i] + resultado[1];
+		// Creamos fichero
+		try {
+			FileWriter myWriter = new FileWriter(path);
+			for (int i = 0; i < M + 1; i++)
+				myWriter.write(arrayResult[i]);
 
-                if(resultado[0] == 1) {
-                    numVictorias++;
-                    victorias[i]++;
-                }
-            }
-        }
-
-        //Resultados por nivel
-        for(int i=0;i<5;i++) {
-            System.out.println("Nivel: " + (i+1) + " - Victorias: " + (int)victorias[i] + " - Media de Puntos: " + puntos[i]/10);
-        }
-
-        //Resultados totales
-        System.out.println("N�mero Total de Victorias: " + numVictorias + " -- Media Total de Puntos: " + totalPuntos/50);
+			myWriter.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
 
 	}
 }
