@@ -28,7 +28,7 @@ public abstract class NodoHoja extends NodoDecision {
 
 	@Override
 	public STATES decidir(Cerebro c) {
-		return null;
+		return getState();
 	}
 
 }

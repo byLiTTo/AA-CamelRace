@@ -1,7 +1,12 @@
 package uhu.mdp;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import ontology.Types.ACTIONS;
@@ -92,7 +97,7 @@ public class QLearning {
 
 		ArrayList<Integer> candidatos = new ArrayList<Integer>();
 
-		double maxVal = Double.MIN_VALUE;
+		double maxVal = -Double.MAX_VALUE;
 		int indexAction = 0;
 
 		for (int j = 0; j < actions.size(); j++) {
@@ -105,6 +110,9 @@ public class QLearning {
 				indexAction = j;
 				candidatos.add(indexAction);
 			}
+		}
+		if (candidatos.size() == 0) {
+			printTable();
 		}
 
 		Random rd = new Random(System.currentTimeMillis());
@@ -143,73 +151,70 @@ public class QLearning {
 		return 0;
 	}
 
-	private void writeTable(String path) {
-		// TODO
+	public void writeTable(String path) {
+		try {
+			FileWriter fichero;
+//        fichero = new FileWriter(nombre + ".tsp");
+			fichero = new FileWriter(path);
+			String fila = "";
+			for (int i = 0; i < states.size(); i++) {
+				fila = "";
+				for (int j = 0; j < actions.size(); j++) {
+					if (j != 0)
+						fila += "," + qTable[i][j];
+					else
+						fila += qTable[i][j];
+				}
+				fichero.write(fila + "\n");
+			}
+			fichero.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
 	}
 
-	private void readTable(String path) {
-		// TODO
+	public void readTable(String path) {
+		try {
+			FileReader fichero = new FileReader(path); // FileReader sierve para leer ficheros
+			BufferedReader b = new BufferedReader(fichero); // BufferReader sirve para leer texto de una entrada de
+															// caracteres
+			String aux; // Variable donde guardar las lecturas de fichero de forma momentanea
+			ArrayList<String> stringFichero = new ArrayList<>(); // Almacena cada linea del fichero
+			String[] parts; // Para dividir Strings
+
+			// Mientras pueda leer la siguiente linea, sigue leyendo, hace la asignación
+			// dentro del if
+			while ((aux = b.readLine()) != null) {
+				stringFichero.add(aux);
+			}
+
+			fichero.close();
+			for (int i = 0; i < stringFichero.size(); i++) {
+				aux = stringFichero.get(i);
+				parts = aux.split(",");
+
+				for (int j = 0; j < parts.length; j++) {
+					qTable[i][j] = Double.parseDouble(parts[j]);
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+
+		printTable();
+
 	}
 
-//	public void update(Estado lastState, ACTIONS lastAction, Estado currentState) {
-//		double qValue = 0;
-//
-//		// Aprendemos de la experiencia pero no sobreescribimos
-//		qValue += getQValue(lastState, lastAction) * (1 - alpha);
-//
-//		// Y le sumamos el maximo qValue del estado que nos encontramos
-//		qValue += alpha * (reward + discount * getValue(currentState));
-//
-//		setValues(currentState, lastAction, qValue);
-//	}
-//
-//	public void getQValue(Estado state, ACTIONS action) {
-//		// De vuelve el valor q de la posicion estado accion
-////		return qTable[state][action];
-//	}
-//
-//	public ACTIONS getAction(Estado state) {
-//		// Cogemos las acciones disponibles
-//		ACTIONS action = getActionFromQValues(state);
-//		return action;
-//	}
-//
-//	public double getMaxValueFromQValues(Estado state) {
-//		// Si no hay acciones disponibles
-//		if (getAviableActions(state) == 0) {
-//			return 0.0;
-//		}
-//		double maxEval = Double.MIN_VALUE;
-//		
-//		for action in getAviableActions(state){
-//			qValAcc = getQValue(state, action);
-//			if(qValAcc > maxEval) {
-//				maxEval = qValAcc;
-//			}
-//		}
-//		return maxEval;
-//	}
-//	
-//	public ACTIONS getActionFromQValues(Estado state) {
-//		// Por defecto no hacemos nada
-//		ACTIONS bestAction = null;
-//		
-//		double maxEval = Double.MIN_VALUE;
-//		for action in getAviableActions(state) {
-//			if(getQValue(state, action) > maxEval) {
-//				maxEval = getQValue(state, action);
-//				// Añadir accion a array de acciones
-//			}else /* Si son iguales */ {
-//				// Añadir tambien al array de acciones
-//			}
-//		}
-//		// Devuelve una accion aleatoria dentro de las mejores
-//		return null;
-//	}
-// 
-//
-//	public ACTIONS getBestAction(Estado state) {
-//		
-//	}
+	public void printTable() {
+		for (int i = 0; i < states.size(); i++) {
+			System.out.println();
+			for (int j = 0; j < actions.size(); j++) {
+				System.out.print(qTable[i][j] + " , ");
+			}
+		}
+		System.out.println();
+	}
 
 }

@@ -39,6 +39,8 @@ public class Cerebro {
 	private Caminando caminando;
 	private Bloqueado bloqueado;
 
+	private ACTIONS lastAction = ACTIONS.ACTION_RIGHT;
+
 	// =============================================================================
 	// CONSTRUCTORES
 	// =============================================================================
@@ -88,26 +90,21 @@ public class Cerebro {
 	 * @param percepcion Observacion del estado actual.
 	 */
 	private void analizarMapa(StateObservation percepcion) {
-		this.mapa.actualiza(percepcion, Visualizaciones.BASICO);
+		this.mapa.actualiza(percepcion, Visualizaciones.NADA);
 	}
 
 	private void actualizaState(StateObservation percepcion) {
-		System.out.println("Antes de actualizar");
-		System.out.println("lastState: " + lastState);
-		System.out.println("currentState: " + currentState);
+//		System.out.println("Antes de actualizar");
+//		System.out.println("lastState: " + lastState);
+//		System.out.println("currentState: " + currentState);
 
 		this.lastState = this.currentState;
 		this.currentState = this.raiz.decidir(this);
 
-		System.out.println("Despues de actualizar");
-		System.out.println("lastState: " + lastState);
-		System.out.println("currentState: " + currentState);
+//		System.out.println("\nDespues de actualizar");
+//		System.out.println("lastState: " + lastState);
+//		System.out.println("currentState: " + currentState);
 
-		if (currentState == null) {
-			System.out.println("Soy mongolito");
-		} else {
-			System.out.println("Quizas no sea tan mongolito");
-		}
 	}
 
 	/**
@@ -116,10 +113,10 @@ public class Cerebro {
 	 * @return Accion a realizar tras recorrer los nodos el arbol.
 	 */
 	public ACTIONS pensar(StateObservation percepcion) {
-		double reward = getReward(lastState, percepcion.getAvatarLastAction(), currentState);
-		this.qlearning.update(lastState, percepcion.getAvatarLastAction(), currentState, reward);
-		System.out.println("Hola don jose");
-		return this.qlearning.nextAction(currentState);
+		double reward = getReward(lastState, lastAction, currentState);
+		this.qlearning.update(lastState, lastAction, currentState, reward);
+		this.lastAction = this.qlearning.nextAction(currentState);
+		return lastAction;
 	}
 
 	public ACTIONS entrenar(StateObservation percepcion) {
@@ -181,6 +178,14 @@ public class Cerebro {
 		this.acercandose.setYes(caminando);
 		this.acercandose.setNo(bloqueado);
 
+	}
+
+	public void writeTable(String path) {
+		qlearning.writeTable(path);
+	}
+	
+	public void readTable(String path) {
+		qlearning.readTable(path);
 	}
 
 }

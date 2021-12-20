@@ -27,7 +27,6 @@ public class Agent extends AbstractPlayer {
 	 */
 	public Agent(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 		this.c = new Cerebro(percepcion);
-		System.out.println("Hola don pepito");
 	}
 
 	// =============================================================================
@@ -48,5 +47,10 @@ public class Agent extends AbstractPlayer {
 		ACTIONS accion = c.pensar(percepcion);
 
 		return accion;
+	}
+
+	@Override
+	public void result(StateObservation stateObs, ElapsedCpuTimer elapsedCpuTimer) {
+		c.writeTable("QTABLE.txt");
 	}
 }
