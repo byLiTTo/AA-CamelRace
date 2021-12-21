@@ -54,13 +54,14 @@ public class Test {
 		// ==============================================================================================================
 
 		String path = "resultados.csv";
-		int M = 200; // Número de partidas
+		int M = 500; // Número de partidas
 		String[] arrayResult = new String[M + 1];
 		arrayResult[0] = "Partida,Ticks\n";
 		Double[] arrayTicks = new Double[M];
 		for (int i = 0; i < M + 1; i++) {
 			System.out.println("\nPartida actual: " + (i + 1));
-			double[] resultado = ArcadeMachine.runOneGame(game, level1, true, sampleMDPController, recordActionsFile,
+			double[] resultado = ArcadeMachine.runOneGame(game, level1, true
+					, sampleMDPController, recordActionsFile,
 					seed, 0);
 			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
 			// resultado[2] -> ticks

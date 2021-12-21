@@ -272,7 +272,7 @@ public class Cerebro {
 		// --- CREAMOS EL ARBOL ---
 
 		// Asignamos la raiz
-		this.raiz = this.retrocediendo;
+		this.raiz = this.estoyRetrocediendo;
 
 		// Retrocediendo?
 		this.estoyRetrocediendo.setYes(bloqueado);

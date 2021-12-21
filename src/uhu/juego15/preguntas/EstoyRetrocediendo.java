@@ -23,8 +23,10 @@ public class EstoyRetrocediendo extends NodoLogico {
 
 		if (distanciaAhora <= distanciaAntes) {
 			this.setValor(false);
+//			System.out.println("No estoy retrocediendo");
 		} else {
 			this.setValor(true);
+//			System.out.println("Estoy retrocediendo");
 		}
 		return super.decidir(c);
 	}
