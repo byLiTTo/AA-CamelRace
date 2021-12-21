@@ -44,6 +44,7 @@ public class Agent extends AbstractPlayer {
 	public ACTIONS act(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 
 		c.percibe(percepcion);
+//		ACTIONS accion = c.entrenar(percepcion);
 		ACTIONS accion = c.pensar(percepcion);
 
 		return accion;
@@ -52,5 +53,6 @@ public class Agent extends AbstractPlayer {
 	@Override
 	public void result(StateObservation stateObs, ElapsedCpuTimer elapsedCpuTimer) {
 		c.writeTable("QTABLE.txt");
+//		System.out.println("PUNTUACION: "+ c.getGR());
 	}
 }

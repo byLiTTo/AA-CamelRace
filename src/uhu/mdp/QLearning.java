@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import javax.imageio.event.IIOReadWarningListener;
+
 import ontology.Types.ACTIONS;
 import static uhu.Constantes.*;
 
@@ -48,6 +50,11 @@ public class QLearning {
 		this.reward = reward;
 		double sample = reward + gamma * getMaxQValue(currentState);
 		double newQValue = (1 - alpha) * getQValue(lastState, lastAction) + alpha * sample;
+
+//		double lastQValue = getQValue(lastState, lastAction);
+//		double maxCurrentQValue = getMaxQValue(currentState);
+//
+//		double newQValue = lastQValue + alpha * (reward + gamma * maxCurrentQValue - lastQValue);
 
 		setQValue(lastState, lastAction, newQValue);
 
@@ -111,9 +118,10 @@ public class QLearning {
 				candidatos.add(indexAction);
 			}
 		}
-		if (candidatos.size() == 0) {
-			printTable();
-		}
+
+//		if (candidatos.size() == 0) {
+//			printTable();
+//		}
 
 		Random rd = new Random(System.currentTimeMillis());
 		int seleccion = rd.nextInt(candidatos.size());
@@ -144,6 +152,21 @@ public class QLearning {
 		} else {
 			return getBestAction(currentState);
 		}
+	}
+
+	public ACTIONS nextOnlyOneBestAction(STATES currentState) {
+		int i = states.indexOf(currentState);
+
+		double maxVal = -Double.MAX_VALUE;
+		int indexAction = 0;
+
+		for (int j = 0; j < actions.size(); j++) {
+			if (qTable[i][j] > maxVal) {
+				maxVal = qTable[i][j];
+				indexAction = j;
+			}
+		}
+		return actions.get(indexAction);
 	}
 
 	private double getReward(STATES lastState, ACTIONS lastAction, STATES currentState) {
@@ -203,7 +226,7 @@ public class QLearning {
 			e.printStackTrace();
 		}
 
-		printTable();
+//		printTable();
 
 	}
 

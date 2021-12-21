@@ -34,12 +34,22 @@ public class Cerebro {
 
 	private Nodo raiz;
 
-	private AcercandoseMeta acercandose;
+	// Nodos de decisi�n - Preguntas
+	private MuroDerecha muroDerecha;
+	private MuroAbajo muroAbajo;
+	private MuroArriba muroArriba;
+	private Retrocediendo retrocediendo;
 
-	private Caminando caminando;
-	private Bloqueado bloqueado;
+	// Nodos hojas - Estados
+	private CaminoDerecha caminoDerecha;
+	private CaminoAbajo caminoAbajo;
+	private CaminoArriba caminoArriba;
+	private CaminoAtras caminoAtras;
 
 	private ACTIONS lastAction = ACTIONS.ACTION_RIGHT;
+
+	private double reward;
+	private double globalReward;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -58,8 +68,11 @@ public class Cerebro {
 		this.mapa = new Mapa(dim.width / bloque, dim.height / bloque, bloque, percepcion);
 		this.qlearning = new QLearning(getStates(), getActions(), new String("QTABLE.txt"));
 
-		this.currentState = STATES.CAMINANDO;
-		this.lastState = STATES.CAMINANDO;
+		this.currentState = STATES.CAMINODERECHA;
+		this.lastState = STATES.CAMINODERECHA;
+
+		this.reward = 0;
+		this.globalReward = 0;
 
 		generaArbol();
 	}
@@ -75,6 +88,10 @@ public class Cerebro {
 	 */
 	public Mapa getMapa() {
 		return this.mapa;
+	}
+
+	public ACTIONS getLastAction() {
+		return this.lastAction;
 	}
 
 	// =============================================================================
@@ -113,15 +130,26 @@ public class Cerebro {
 	 * @return Accion a realizar tras recorrer los nodos el arbol.
 	 */
 	public ACTIONS pensar(StateObservation percepcion) {
-		double reward = getReward(lastState, lastAction, currentState);
-		this.qlearning.update(lastState, lastAction, currentState, reward);
-		this.lastAction = this.qlearning.nextAction(currentState);
+		this.lastAction = this.qlearning.nextOnlyOneBestAction(currentState);
+
+		System.out.println("\nEstado: " + this.currentState);
+
 		return lastAction;
 	}
 
 	public ACTIONS entrenar(StateObservation percepcion) {
+		double reward = getReward(lastState, lastAction, currentState);
+		this.qlearning.update(lastState, lastAction, currentState, reward);
+		this.lastAction = this.qlearning.nextAction(currentState);
 
-		return null;
+//		System.out.println("\nEstado: " + this.currentState);
+//		System.out.println("\nRECOMPENSA: " + this.globalReward);
+
+		return lastAction;
+	}
+
+	public double getGR() {
+		return this.globalReward;
 	}
 
 	// =============================================================================
@@ -129,32 +157,97 @@ public class Cerebro {
 	// =============================================================================
 
 	private double getReward(STATES lastState, ACTIONS lastAction, STATES currentState) {
-		double reward = 0;
-		switch (lastState) {
-		case CAMINANDO:
-			switch (currentState) {
-			case CAMINANDO:
-				reward += 30;
-				break;
-			case BLOQUEADO:
-				reward -= 20;
-			}
-			break;
-		case BLOQUEADO:
-			switch (currentState) {
-			case CAMINANDO:
-				reward += 10;
-				break;
-			case BLOQUEADO:
-				reward -= 40;
-			}
-			break;
+		this.reward = 0;
+//		switch (lastState) {
+//		case CAMINODERECHA:
+//			switch (currentState) {
+//			case CAMINODERECHA:
+//				reward = 10;
+//				break;
+//			case CAMINOABAJO:
+//				reward = -15;
+//				break;
+//			case CAMINOARRIBA:
+//				reward = -15;
+//				break;
+//			case CAMINOATRAS:
+//				reward = -15;
+//				break;
+//			}
+//			break;
+//		case CAMINOABAJO:
+//			switch (currentState) {
+//			case CAMINODERECHA:
+//				reward = -15;
+//				break;
+//			case CAMINOABAJO:
+//				reward = 10;
+//				break;
+//			case CAMINOARRIBA:
+//				reward = -15;
+//				break;
+//			case CAMINOATRAS:
+//				reward = -15;
+//				break;
+//			}
+//		case CAMINOARRIBA:
+//			switch (currentState) {
+//			case CAMINODERECHA:
+//				reward = -15;
+//				break;
+//			case CAMINOABAJO:
+//				reward = -15;
+//				break;
+//			case CAMINOARRIBA:
+//				reward = 10;
+//				break;
+//			case CAMINOATRAS:
+//				reward = -15;
+//				break;
+//			}
+//		case CAMINOATRAS:
+//			switch (currentState) {
+//			case CAMINODERECHA:
+//				reward = -15;
+//				break;
+//			case CAMINOABAJO:
+//				reward = -15;
+//				break;
+//			case CAMINOARRIBA:
+//				reward = -15;
+//				break;
+//			case CAMINOATRAS:
+//				reward = 10;
+//				break;
+//			}
+//		}
+//		this.globalReward += reward;
+////		return reward;
+//		return globalReward;
+
+		Casilla ahora = mapa.getAvatar();
+		Casilla antes = mapa.getLastAvatar();
+
+		int columna = mapa.getColumnaPortal();
+
+		double distanciaAhora = Math.abs(ahora.getX() - columna);
+		double distanciaAntes = Math.abs(antes.getX() - columna);
+
+		if (distanciaAhora < distanciaAntes) {
+			return 50;
+		} else if (distanciaAhora == distanciaAntes) {
+
+			return -20;
+		} else {
+			return -50;
 		}
-		return reward;
+
 	}
 
 	private ArrayList<STATES> getStates() {
-		return new ArrayList<STATES>(Arrays.asList(STATES.CAMINANDO, STATES.BLOQUEADO));
+		// CAMINODERECHA, CAMINOABAJO, CAMINOARRIBA, CAMINOATRAS
+		return new ArrayList<STATES>(
+				Arrays.asList(STATES.CAMINODERECHA, STATES.CAMINOABAJO, STATES.CAMINOARRIBA, STATES.CAMINOATRAS));
 	}
 
 	private ArrayList<ACTIONS> getActions() {
@@ -165,25 +258,43 @@ public class Cerebro {
 	public void generaArbol() {
 
 		// Inializacion de nodos preguntas
-		this.acercandose = new AcercandoseMeta();
+		this.muroDerecha = new MuroDerecha();
+		this.muroAbajo = new MuroAbajo();
+		this.muroArriba = new MuroArriba();
+		this.retrocediendo = new Retrocediendo();
 
 		// Inicializacion de nodos hoja
-		this.caminando = new Caminando(STATES.CAMINANDO);
-		this.bloqueado = new Bloqueado(STATES.BLOQUEADO);
+		this.caminoDerecha = new CaminoDerecha(STATES.CAMINODERECHA);
+		this.caminoAbajo = new CaminoAbajo(STATES.CAMINOABAJO);
+		this.caminoArriba = new CaminoArriba(STATES.CAMINOARRIBA);
+		this.caminoAtras = new CaminoAtras(STATES.CAMINOATRAS);
 
-		// Creacion del arbol--------------------------------------
-		this.raiz = this.acercandose;
+		// --- CREAMOS EL ARBOL ---
 
-		// ¿Estoy mas cerca?
-		this.acercandose.setYes(caminando);
-		this.acercandose.setNo(bloqueado);
+		// Asignamos la raiz
+		this.raiz = this.retrocediendo;
 
+		// �Retrocediendo?
+		this.retrocediendo.setYes(this.muroAbajo);
+		this.retrocediendo.setNo(this.muroDerecha);
+
+		// �Muro abajo?
+		this.muroAbajo.setYes(this.muroArriba);
+		this.muroAbajo.setNo(this.caminoAbajo);
+
+		// �Muro arriba?
+		this.muroArriba.setYes(this.caminoAtras);
+		this.muroArriba.setNo(this.caminoArriba);
+
+		// �Muro derecha?
+		this.muroDerecha.setYes(this.muroAbajo);
+		this.muroDerecha.setNo(this.caminoDerecha);
 	}
 
 	public void writeTable(String path) {
 		qlearning.writeTable(path);
 	}
-	
+
 	public void readTable(String path) {
 		qlearning.readTable(path);
 	}

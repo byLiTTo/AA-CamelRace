@@ -54,7 +54,7 @@ public class Mapa {
 		this.tablero = new ArrayList<ArrayList<Casilla>>();
 
 		this.avatar = new Casilla();
-
+		
 		actualiza(percepcion, Visualizaciones.NADA);
 	}
 
@@ -171,24 +171,24 @@ public class Mapa {
 			break;
 		}
 
-		ACTIONS lastAction = percepcion.getAvatarLastAction();
-		switch (lastAction) {
-		case ACTION_UP:
-			this.avatarLastPosition.setY(this.avatar.getY() - 1);
-			break;
-		case ACTION_DOWN:
-			this.avatarLastPosition.setY(this.avatar.getY() + 1);
-			break;
-		case ACTION_LEFT:
-			this.avatarLastPosition.setX(this.avatar.getX() + 1);
-			break;
-		case ACTION_RIGHT:
-			this.avatarLastPosition.setX(this.avatar.getX() - 1);
-			break;
-		default:
-			this.avatarLastPosition = this.avatar;
-			break;
-		}
+//		ACTIONS lastAction = percepcion.getAvatarLastAction();
+//		switch (lastAction) {
+//		case ACTION_UP:
+//			this.avatarLastPosition.setY(this.avatar.getY() - 1);
+//			break;
+//		case ACTION_DOWN:
+//			this.avatarLastPosition.setY(this.avatar.getY() + 1);
+//			break;
+//		case ACTION_LEFT:
+//			this.avatarLastPosition.setX(this.avatar.getX() + 1);
+//			break;
+//		case ACTION_RIGHT:
+//			this.avatarLastPosition.setX(this.avatar.getX() - 1);
+//			break;
+//		default:
+//			this.avatarLastPosition = this.avatar;
+//			break;
+//		}
 
 	}
 
@@ -314,6 +314,14 @@ public class Mapa {
 		}
 	}
 
+	private void initAvatarPosition(Vector2d pos) {
+		int x = (int) Math.ceil(pos.x / this.bloque);
+		int y = (int) Math.ceil(pos.y / this.bloque);
+
+		this.tablero.get(x).get(y).setEstado(AVATAR);
+		this.avatar = this.tablero.get(x).get(y);
+	}
+
 	/**
 	 * Asigna la posicion del avatar dentro del tablero y guarda la casilla en la
 	 * variable superman.
@@ -321,6 +329,7 @@ public class Mapa {
 	 * @param percepcion Observaci�n del estado actual.
 	 */
 	private void setAvatarPosition(Vector2d pos) {
+		this.avatarLastPosition = this.avatar;
 		int x = (int) Math.ceil(pos.x / this.bloque);
 		int y = (int) Math.ceil(pos.y / this.bloque);
 

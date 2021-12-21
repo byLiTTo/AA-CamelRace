@@ -39,7 +39,7 @@ public class Test {
 
 		// Game and level to play
 		int gameIdx = 15;
-		int levelIdx = 7; // level names from 0 to 4 (game_lvlN.txt).
+		int levelIdx = 5; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 		String level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
@@ -48,6 +48,38 @@ public class Test {
 		// + levelIdx + "_" + seed + ".txt";
 		// where to record the actions
 		// executed. null if not to save.
+
+		// ==============================================================================================================
+		// NUESTRO ENTRENAMIENTO
+		// ==============================================================================================================
+
+		String path = "resultados.csv";
+		int M = 200; // Número de partidas
+		String[] arrayResult = new String[M + 1];
+		arrayResult[0] = "Partida,Ticks\n";
+		Double[] arrayTicks = new Double[M];
+		for (int i = 0; i < M + 1; i++) {
+			System.out.println("\nPartida actual: " + (i + 1));
+			double[] resultado = ArcadeMachine.runOneGame(game, level1, true, sampleMDPController, recordActionsFile,
+					seed, 0);
+			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
+			// resultado[2] -> ticks
+			arrayResult[i] = i + "," + resultado[2] + "\n";
+		}
+
+		// Creamos fichero
+		try {
+			FileWriter myWriter = new FileWriter(path);
+			for (int i = 0; i < M + 1; i++)
+				myWriter.write(arrayResult[i]);
+
+			myWriter.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+
+		// ==============================================================================================================
 
 		// 1. This starts a game, in a level, played by a human.
 //		ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
@@ -144,31 +176,6 @@ public class Test {
 //
 //        //Resultados totales
 //        System.out.println("Numero Total de Victorias: " + numVictorias + " -- Media Total de Puntos: " + totalPuntos/50);
-
-		String path = "resultados.csv";
-		int M = 2; // Número de partidas
-		String[] arrayResult = new String[M + 1];
-		arrayResult[0] = "Partida,Ticks\n";
-		Double[] arrayTicks = new Double[M];
-		for (int i = 0; i < M + 1; i++) {
-			double[] resultado = ArcadeMachine.runOneGame(game, level1, false, sampleMDPController, recordActionsFile,
-					seed, 0);
-			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
-			// resultado[2] -> ticks
-			arrayResult[i + 1] = i + "," + resultado[2] + "\n";
-		}
-
-		// Creamos fichero
-		try {
-			FileWriter myWriter = new FileWriter(path);
-			for (int i = 0; i < M + 1; i++)
-				myWriter.write(arrayResult[i]);
-
-			myWriter.close();
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}
 
 	}
 }
