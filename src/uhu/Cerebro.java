@@ -34,17 +34,17 @@ public class Cerebro {
 
 	private Nodo raiz;
 
-	// Nodos de decisi�n - Preguntas
-	private MuroDerecha muroDerecha;
-	private MuroAbajo muroAbajo;
+	// Nodos de decision - Preguntas
+	private PuedeAvanzar puedeAvanzar;
 	private MuroArriba muroArriba;
-	private Retrocediendo retrocediendo;
+	private EstoyRetrocediendo estoyRetrocediendo;
+	private Bloqueandose bloqueado;
 
 	// Nodos hojas - Estados
-	private CaminoDerecha caminoDerecha;
-	private CaminoAbajo caminoAbajo;
-	private CaminoArriba caminoArriba;
-	private CaminoAtras caminoAtras;
+	private Avanzando avanzando;
+	private Retrocediendo retrocediendo;
+	private Subiendo subiendo;
+	private Bajando bajando;
 
 	private ACTIONS lastAction = ACTIONS.ACTION_RIGHT;
 
@@ -68,8 +68,8 @@ public class Cerebro {
 		this.mapa = new Mapa(dim.width / bloque, dim.height / bloque, bloque, percepcion);
 		this.qlearning = new QLearning(getStates(), getActions(), new String("QTABLE.txt"));
 
-		this.currentState = STATES.CAMINODERECHA;
-		this.lastState = STATES.CAMINODERECHA;
+		this.currentState = STATES.AVANZANDO;
+		this.lastState = STATES.AVANZANDO;
 
 		this.reward = 0;
 		this.globalReward = 0;
@@ -246,8 +246,8 @@ public class Cerebro {
 
 	private ArrayList<STATES> getStates() {
 		// CAMINODERECHA, CAMINOABAJO, CAMINOARRIBA, CAMINOATRAS
-		return new ArrayList<STATES>(
-				Arrays.asList(STATES.CAMINODERECHA, STATES.CAMINOABAJO, STATES.CAMINOARRIBA, STATES.CAMINOATRAS));
+		return new ArrayList<STATES>(Arrays.asList(STATES.AVANZANDO, STATES.RETROCEDIENDO, STATES.BLOQUEADO,
+				STATES.SUBIENDO, STATES.BAJANDO));
 	}
 
 	private ArrayList<ACTIONS> getActions() {
@@ -257,38 +257,38 @@ public class Cerebro {
 
 	public void generaArbol() {
 
-		// Inializacion de nodos preguntas
-		this.muroDerecha = new MuroDerecha();
-		this.muroAbajo = new MuroAbajo();
-		this.muroArriba = new MuroArriba();
-		this.retrocediendo = new Retrocediendo();
+		// Nodos de decision - Preguntas
+		puedeAvanzar = new PuedeAvanzar();
+		muroArriba = new MuroArriba();
+		estoyRetrocediendo = new EstoyRetrocediendo();
+		bloqueado = new Bloqueandose();
 
-		// Inicializacion de nodos hoja
-		this.caminoDerecha = new CaminoDerecha(STATES.CAMINODERECHA);
-		this.caminoAbajo = new CaminoAbajo(STATES.CAMINOABAJO);
-		this.caminoArriba = new CaminoArriba(STATES.CAMINOARRIBA);
-		this.caminoAtras = new CaminoAtras(STATES.CAMINOATRAS);
+		// Nodos hojas - Estados
+		avanzando = new Avanzando(STATES.AVANZANDO);
+		retrocediendo = new Retrocediendo(STATES.RETROCEDIENDO);
+		subiendo = new Subiendo(STATES.SUBIENDO);
+		bajando = new Bajando(STATES.BAJANDO);
 
 		// --- CREAMOS EL ARBOL ---
 
 		// Asignamos la raiz
 		this.raiz = this.retrocediendo;
 
-		// �Retrocediendo?
-		this.retrocediendo.setYes(this.muroAbajo);
-		this.retrocediendo.setNo(this.muroDerecha);
+		// Retrocediendo?
+		this.estoyRetrocediendo.setYes(bloqueado);
+		this.estoyRetrocediendo.setNo(puedeAvanzar);
 
-		// �Muro abajo?
-		this.muroAbajo.setYes(this.muroArriba);
-		this.muroAbajo.setNo(this.caminoAbajo);
+		// Puedo avanzar?
+		this.puedeAvanzar.setYes(avanzando);
+		this.puedeAvanzar.setNo(bloqueado);
 
-		// �Muro arriba?
-		this.muroArriba.setYes(this.caminoAtras);
-		this.muroArriba.setNo(this.caminoArriba);
+		// Estoy bloqueado?
+		this.bloqueado.setYes(retrocediendo);
+		this.bloqueado.setNo(muroArriba);
 
-		// �Muro derecha?
-		this.muroDerecha.setYes(this.muroAbajo);
-		this.muroDerecha.setNo(this.caminoDerecha);
+		// Tengo muro arriba?
+		this.muroArriba.setYes(bajando);
+		this.muroArriba.setNo(subiendo);
 	}
 
 	public void writeTable(String path) {

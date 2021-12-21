@@ -3,9 +3,9 @@ package uhu.juego15.estados;
 import uhu.Constantes.STATES;
 import uhu.arbol.NodoHoja;
 
-public class CaminoAtras extends NodoHoja {
+public class Bajando extends NodoHoja {
 
-	public CaminoAtras(STATES s) {
+	public Bajando(STATES s) {
 		super(s);
 	}
 
