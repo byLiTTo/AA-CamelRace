@@ -3,9 +3,9 @@ package uhu.juego15.estados;
 import uhu.Constantes.STATES;
 import uhu.arbol.NodoHoja;
 
-public class Avanzando extends NodoHoja {
+public class ORIENTE_CON_PARED_IZQUIERDA extends NodoHoja {
 
-	public Avanzando(STATES s) {
+	public ORIENTE_CON_PARED_IZQUIERDA(STATES s) {
 		super(s);
 	}
 

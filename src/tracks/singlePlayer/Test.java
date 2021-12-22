@@ -39,7 +39,7 @@ public class Test {
 
 		// Game and level to play
 		int gameIdx = 15;
-		int levelIdx = 5; // level names from 0 to 4 (game_lvlN.txt).
+		int levelIdx = 7; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 		String level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
@@ -54,7 +54,7 @@ public class Test {
 		// ==============================================================================================================
 
 		String path = "resultados.csv";
-		int M = 500; // Número de partidas
+		int M = 10; // Número de partidas
 		String[] arrayResult = new String[M + 1];
 		arrayResult[0] = "Partida,Ticks\n";
 		Double[] arrayTicks = new Double[M];

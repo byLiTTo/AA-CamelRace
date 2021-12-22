@@ -7,7 +7,7 @@ import uhu.grid.Casilla;
 
 import static uhu.Constantes.*;
 
-public class Bloqueandose extends NodoLogico {
+public class TIENES_MURO_ABAJO extends NodoLogico {
 	@Override
 	public STATES decidir(Cerebro c) {
 
