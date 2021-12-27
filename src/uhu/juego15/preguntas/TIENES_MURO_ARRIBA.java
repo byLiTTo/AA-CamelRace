@@ -12,11 +12,9 @@ public class TIENES_MURO_ARRIBA extends NodoLogico {
 	public STATES decidir(Cerebro c) {
 
 		Casilla avatar = c.getMapa().getAvatar();
+		Casilla arriba = c.getMapa().getNodo(avatar.getX(), avatar.getY()-1);
 		
-		Casilla arriba = c.getMapa().getNodo(avatar.getX(), avatar.getY()+1);
-		Casilla abajo = c.getMapa().getNodo(avatar.getX(), avatar.getY()-1);
-		
-		if (arriba.getEstado().equals(MURO) && abajo.getEstado().equals(MURO)) {
+		if (arriba.getEstado().equals(MURO)) {
 			this.setValor(true);
 		} else {
 			this.setValor(false);

@@ -6,6 +6,7 @@ package uhu;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import core.game.StateObservation;
 import ontology.Types.ACTIONS;
@@ -35,21 +36,31 @@ public class Cerebro {
 	private Nodo raiz;
 
 	// Nodos de decision - Preguntas
-	private TIENES_MURO TIENES_MURO;
-	private TIENES_MURO_ARRIBA TIENES_MURO_ARRIBA;
-	private TIENES_MURO_ABAJO TIENES_MURO_ABAJO;
-	private TIENES_MURO_IZQUIERDA TIENES_MURO_IZQUIERDA;
-	private TIENES_MURO_DERECHA TIENES_MURO_DERECHA;
+	// Sur
+	private ORIENTACION_SUR orientacion_Sur;
+	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Sur;
+	private TIENES_MURO_ABAJO tienesMuroAbajo_Sur;
 
+	// Este
+	private ORIENTACION_ESTE orientacion_Este;
+	private TIENES_MURO_ABAJO tienesMuroAbajo_Este;
+	private TIENES_MURO_DERECHA tienesMuroDerecha_Este;
+
+	// Norte
+	private ORIENTACION_NORTE orientacion_Norte;
+	private TIENES_MURO_DERECHA tienesMuroDerecha_Norte;
+	private TIENES_MURO_ARRIBA tienesMuroArriba1_Norte;
+	private TIENES_MURO_ARRIBA tienesMuroArriba2_Norte;
+	
+	// Oeste
+	private TIENES_MURO_ARRIBA tienesMuroArriba_Oeste;
+	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Oeste;	
+	
 	// Nodos hojas - Estados
-	private ORIENTE_CON_PARED_IZQUIERDA ORIENTE_CON_PARED_IZQUIERDA;
-	private ORIENTE_CON_PARED_IZQUIERDA_ABAJO ORIENTE_CON_PARED_IZQUIERDA_ABAJO;
-	private ORIENTE_CON_PARED_ABAJO ORIENTE_CON_PARED_ABAJO;
-	private ORIENTE_CON_PARED_ABAJO_DERECHA ORIENTE_CON_PARED_ABAJO_DERECHA;
-	private ORIENTE_CON_PARED_DERECHA ORIENTE_CON_PARED_DERECHA;
-	private ORIENTE_CON_PARED_DERECHA_ARRIBA ORIENTE_CON_PARED_DERECHA_ARRIBA;
-	private ORIENTE_CON_PARED_ARRIBA ORIENTE_CON_PARED_ARRIBA;
-	private ORIENTE_SIN_PARED ORIENTE_SIN_PARED;
+	private ESTADO_NORTE estadoNorte;
+	private ESTADO_SUR estadoSur;
+	private ESTADO_ESTE estadoEste;
+	private ESTADO_OESTE estadoOeste;
 
 	private ACTIONS lastAction;
 	private SENTIDO sentido;
@@ -75,17 +86,18 @@ public class Cerebro {
 		this.mapa = new Mapa(dim.width / bloque, dim.height / bloque, bloque, percepcion);
 
 		if (this.mapa.getAvatar().getX() - this.mapa.getColumnaPortal() < 0) {
-			this.sentido = SENTIDO.ORIENTE;
+//			this.sentido = SENTIDO.ORIENTE;
 			this.lastAction = ACTIONS.ACTION_DOWN;
-			this.currentState = STATES.ORIENTE_PARED_IZQUIERDA;
-			this.lastState = STATES.ORIENTE_PARED_IZQUIERDA;
+			this.currentState = STATES.HACIA_SUR;
+			this.lastState = STATES.HACIA_SUR;
 			this.orientacion = ORIENTACION.SUR;
 
 		} else {
-			this.sentido = SENTIDO.OCCIDENTE;
+//			this.sentido = SENTIDO.OCCIDENTE;
 			this.lastAction = ACTIONS.ACTION_UP;
-//			this.currentState = STATES.ORIENTE_CON_PARED_IZQUIERDA;
-//			this.lastState = STATES.ORIENTE_CON_PARED_IZQUIERDA;
+			this.currentState = STATES.HACIA_NORTE;
+			this.lastState = STATES.HACIA_NORTE;
+			this.orientacion = ORIENTACION.NORTE;
 		}
 
 		this.qlearning = new QLearning(getStates(), getActions(), new String("QTABLE.txt"));
@@ -93,7 +105,7 @@ public class Cerebro {
 		this.reward = 0;
 		this.globalReward = 0;
 
-//		generaArbol();
+		generaArbol();
 	}
 
 	// =============================================================================
@@ -111,6 +123,10 @@ public class Cerebro {
 
 	public ACTIONS getLastAction() {
 		return this.lastAction;
+	}
+	
+	public ORIENTACION getOrientacion() {
+		return this.orientacion;
 	}
 
 	// =============================================================================
@@ -134,80 +150,11 @@ public class Cerebro {
 //		System.out.println("lastState: " + lastState);
 //		System.out.println("currentState: " + currentState);
 //		this.currentState = this.raiz.decidir(this);
-
+		this.lastState = this.currentState;
+		this.currentState = this.raiz.decidir(this);
 //		System.out.println("\nDespues de actualizar");
 //		System.out.println("lastState: " + lastState);
 //		System.out.println("currentState: " + currentState);
-
-		if (!tienesMuroArriba() && !tienesMuroAbajo() && !tienesMuroIzquierda() && !tienesMuroDerecha()) {
-			if (tienesDiagonalArribaDerecha()) {
-				this.lastState = this.currentState;
-				this.currentState = STATES.ORIENTE_PARED_DIAGONAL_ARRIBA_DERECHA;
-				System.out.println(currentState);
-				return;
-			} else if (tienesDiagonalArribaIzquierda()) {
-				this.lastState = this.currentState;
-				this.currentState = STATES.ORIENTE_PARED_DIAGONAL_ARRIBA_IZQUIERDA;
-				System.out.println(currentState);
-				return;
-			} else if (tienesDiagonalAbajoDerecha()) {
-				this.lastState = this.currentState;
-				this.currentState = STATES.ORIENTE_PARED_DIAGONAL_ABAJO_DERECHA;
-				System.out.println(currentState);
-				return;
-			} else if (tienesDiagonalAbajoIzquierda()) {
-				this.lastState = this.currentState;
-				this.currentState = STATES.ORIENTE_PARED_DIAGONAL_ABAJO_IZQUIERDA;
-				System.out.println(currentState);
-				return;
-			}
-
-		} else if (!tienesMuroArriba() && !tienesMuroAbajo() && tienesMuroIzquierda() && !tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_IZQUIERDA;
-			System.out.println(currentState);
-			return;
-		} else if (!tienesMuroArriba() && tienesMuroAbajo() && tienesMuroIzquierda() && !tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_IZQUIERDA_ABAJO;
-			System.out.println(currentState);
-			return;
-		} else if (!tienesMuroArriba() && tienesMuroAbajo() && !tienesMuroIzquierda() && !tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_ABAJO;
-			System.out.println(currentState);
-			return;
-		} else if (!tienesMuroArriba() && tienesMuroAbajo() && !tienesMuroIzquierda() && tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_ABAJO_DERECHA;
-			System.out.println(currentState);
-			return;
-		} else if (!tienesMuroArriba() && !tienesMuroAbajo() && !tienesMuroIzquierda() && tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_DERECHA;
-			System.out.println(currentState);
-			return;
-		} else if (tienesMuroArriba() && !tienesMuroAbajo() && !tienesMuroIzquierda() && tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_DERECHA_ARRIBA;
-			System.out.println(currentState);
-			return;
-		} else if (tienesMuroArriba() && !tienesMuroAbajo() && !tienesMuroIzquierda() && !tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_ARRIBA;
-			System.out.println(currentState);
-			return;
-		} else if (tienesMuroArriba() && !tienesMuroAbajo() && tienesMuroIzquierda() && !tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_ARRIBA_IZQUIERDA;
-			System.out.println(currentState);
-			return;
-		}else if (tienesMuroArriba() && tienesMuroAbajo() && !tienesMuroIzquierda() && !tienesMuroDerecha()) {
-			this.lastState = this.currentState;
-			this.currentState = STATES.ORIENTE_PARED_ARRIBA_ABAJO;
-			System.out.println(currentState);
-			return;
-		}
 
 	}
 
@@ -218,7 +165,27 @@ public class Cerebro {
 	 */
 	public ACTIONS pensar(StateObservation percepcion) {
 		this.lastAction = this.qlearning.nextOnlyOneBestAction(currentState);
-
+//		Casilla a = new Casilla(mapa.getAvatar().getX(), mapa.getAvatar().getY()+1, "$");
+//		this.mapa.setNodo(a);
+		
+		switch(this.lastAction) {
+		case ACTION_UP:
+			this.orientacion = ORIENTACION.NORTE;
+			break;
+		case ACTION_DOWN:
+			this.orientacion = ORIENTACION.SUR;
+			break;		
+		case ACTION_RIGHT:
+			this.orientacion = ORIENTACION.ESTE;
+			break;		
+		case ACTION_LEFT:
+			this.orientacion = ORIENTACION.OESTE;
+			break;		
+		}
+		
+//		System.out.println("Orientacion: " + this.orientacion);
+		
+		this.mapa.visualiza();
 //		System.out.println("\nEstado: " + this.currentState);
 
 		return lastAction;
@@ -245,109 +212,68 @@ public class Cerebro {
 
 	private double getReward(STATES lastState, ACTIONS lastAction, STATES currentState) {
 		this.reward = -50;
-//
-////		Casilla ahora = mapa.getAvatar();
-////		Casilla antes = mapa.getLastAvatar();
-////
-////		int columna = mapa.getColumnaPortal();
-////
-////		double distanciaAhora = Math.abs(ahora.getX() - columna);
-////		double distanciaAntes = Math.abs(antes.getX() - columna);
-////
-////		if (distanciaAhora < distanciaAntes) {
-////			return 50;
-////		} else if (distanciaAhora == distanciaAntes) {
-////
-////			return -20;
-////		} else {
-////			return -50;
-////		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_IZQUIERDA && lastAction == ACTIONS.ACTION_DOWN
-//				&& currentState == STATES.ORIENTE_PARED_IZQUIERDA) {
-//			this.reward = 50;
-//		}
-//		if (lastState == STATES.ORIENTE_PARED_IZQUIERDA && lastAction == ACTIONS.ACTION_DOWN
-//				&& currentState == STATES.ORIENTE_PARED_IZQUIERDA_ABAJO) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_IZQUIERDA_ABAJO && lastAction == ACTIONS.ACTION_DOWN
-//				&& currentState == STATES.ORIENTE_PARED_ABAJO) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_ABAJO && lastAction == ACTIONS.ACTION_RIGHT
-//				&& currentState == STATES.ORIENTE_PARED_ABAJO) {
-//			this.reward = 50;
-//		}
-//		if (lastState == STATES.ORIENTE_PARED_ABAJO && lastAction == ACTIONS.ACTION_RIGHT
-//				&& currentState == STATES.ORIENTE_PARED_ABAJO_DERECHA) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_ABAJO_DERECHA && lastAction == ACTIONS.ACTION_UP
-//				&& currentState == STATES.ORIENTE_PARED_DERECHA) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_DERECHA && lastAction == ACTIONS.ACTION_UP
-//				&& currentState == STATES.ORIENTE_PARED_DERECHA) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_DERECHA && lastAction == ACTIONS.ACTION_UP
-//				&& currentState == STATES.ORIENTE_PARED_DERECHA_ARRIBA) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_DERECHA_ARRIBA && lastAction == ACTIONS.ACTION_LEFT
-//				&& currentState == STATES.ORIENTE_PARED_ARRIBA) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_ARRIBA && lastAction == ACTIONS.ACTION_LEFT
-//				&& currentState == STATES.ORIENTE_PARED_ARRIBA) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_ARRIBA && lastAction == ACTIONS.ACTION_LEFT
-//				&& currentState == STATES.ORIENTE_SIN_PARED_ABAJO) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_SIN_PARED_ABAJO && lastAction == ACTIONS.ACTION_UP
-//				&& currentState == STATES.ORIENTE_PARED_DERECHA) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_DERECHA && lastAction == ACTIONS.ACTION_UP
-//				&& currentState == STATES.ORIENTE_SIN_PARED_ABAJO) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_SIN_PARED_ABAJO && lastAction == ACTIONS.ACTION_RIGHT
-//				&& currentState == STATES.ORIENTE_PARED_ABAJO) {
-//			this.reward = 50;
-//		}
-//
-//		if (lastState == STATES.ORIENTE_PARED_ABAJO && lastAction == ACTIONS.ACTION_DOWN
-//				&& currentState == STATES.ORIENTE_SIN_PARED_ABAJO) {
-//			this.reward = 50;
-//		}
-
+		Casilla currentCasilla = this.mapa.getAvatar();
+		Casilla lastCasilla = this.mapa.getLastAvatar();
+		
+		switch(lastState) {
+		case HACIA_NORTE:
+			if(this.checkNorthMovement(lastCasilla.getY(), currentCasilla.getY()))
+				this.reward = 50; 
+			break;
+		case HACIA_SUR:
+			if(this.checkSouthMovement(lastCasilla.getY(), currentCasilla.getY()))
+				this.reward = 50;
+			break;
+		case HACIA_ESTE:
+			if(this.checkEastMovement(lastCasilla.getX(), currentCasilla.getX()))
+				this.reward = 50;
+			break;
+		case HACIA_OESTE:
+			if(this.checkWestMovement(lastCasilla.getX(), currentCasilla.getX()))
+				this.reward = 50;
+			break;
+		}
+		
+//		System.out.println("Orientacion: " + this.orientacion);
+//		System.out.println("Estado: " + currentState);
+//		System.out.println("Recompensa: " + this.reward);
+//		this.mapa.visualiza();
+		
 		return reward;
 
+	}
+	
+	private boolean checkNorthMovement(int a, int b) {
+		if((a-b) > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	private boolean checkSouthMovement(int a, int b) {
+		if((a-b) < 0)
+			return true;
+		else
+			return false;
+	}
+	
+	private boolean checkEastMovement(int a, int b) {
+		if((b-a) > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	private boolean checkWestMovement(int a, int b) {
+		if((b-a) < 0)
+			return true;
+		else
+			return false;
 	}
 
 	private ArrayList<STATES> getStates() {
 		// CAMINODERECHA, CAMINOABAJO, CAMINOARRIBA, CAMINOATRAS
-		return new ArrayList<STATES>(Arrays.asList(STATES.ORIENTE_PARED_IZQUIERDA, STATES.ORIENTE_PARED_IZQUIERDA_ABAJO,
-				STATES.ORIENTE_PARED_ABAJO, STATES.ORIENTE_PARED_ABAJO_DERECHA, STATES.ORIENTE_PARED_DERECHA,
-				STATES.ORIENTE_PARED_DERECHA_ARRIBA, STATES.ORIENTE_PARED_ARRIBA, STATES.ORIENTE_PARED_ARRIBA_IZQUIERDA,
-				STATES.ORIENTE_PARED_ARRIBA_ABAJO, STATES.ORIENTE_PARED_DIAGONAL_ARRIBA_IZQUIERDA,
-				STATES.ORIENTE_PARED_DIAGONAL_ARRIBA_DERECHA, STATES.ORIENTE_PARED_DIAGONAL_ABAJO_IZQUIERDA,
-				STATES.ORIENTE_PARED_DIAGONAL_ABAJO_DERECHA));
+		return new ArrayList<STATES>(Arrays.asList(STATES.HACIA_NORTE, STATES.HACIA_SUR, STATES.HACIA_ESTE, STATES.HACIA_OESTE));
 	}
 
 	private ArrayList<ACTIONS> getActions() {
@@ -355,127 +281,74 @@ public class Cerebro {
 				Arrays.asList(ACTIONS.ACTION_UP, ACTIONS.ACTION_DOWN, ACTIONS.ACTION_LEFT, ACTIONS.ACTION_RIGHT));
 	}
 
-//	public void generaArbol() {
-//
-//		// Nodos de decision - Preguntas
-//		// Nodos de decision - Preguntas
-//		TIENES_MURO = new TIENES_MURO();
-//		TIENES_MURO_ARRIBA = new TIENES_MURO_ARRIBA();
-//		TIENES_MURO_ABAJO = new TIENES_MURO_ABAJO();
-//		TIENES_MURO_IZQUIERDA = new TIENES_MURO_IZQUIERDA();
-//		TIENES_MURO_DERECHA = new TIENES_MURO_DERECHA();
-//
-//		// Nodos hojas - Estados
-//		ORIENTE_CON_PARED_IZQUIERDA = new ORIENTE_CON_PARED_IZQUIERDA(STATES.ORIENTE_CON_PARED_IZQUIERDA);
-//		ORIENTE_CON_PARED_IZQUIERDA_ABAJO = new ORIENTE_CON_PARED_IZQUIERDA_ABAJO(
-//				STATES.ORIENTE_CON_PARED_IZQUIERDA_ABAJO);
-//		ORIENTE_CON_PARED_ABAJO = new ORIENTE_CON_PARED_ABAJO(STATES.ORIENTE_CON_PARED_ABAJO);
-//		ORIENTE_CON_PARED_ABAJO_DERECHA = new ORIENTE_CON_PARED_ABAJO_DERECHA(STATES.ORIENTE_CON_PARED_ABAJO_DERECHA);
-//		ORIENTE_CON_PARED_DERECHA = new ORIENTE_CON_PARED_DERECHA(STATES.ORIENTE_CON_PARED_DERECHA);
-//		ORIENTE_CON_PARED_DERECHA_ARRIBA = new ORIENTE_CON_PARED_DERECHA_ARRIBA(
-//				STATES.ORIENTE_CON_PARED_DERECHA_ARRIBA);
-//		ORIENTE_CON_PARED_ARRIBA = new ORIENTE_CON_PARED_ARRIBA(STATES.ORIENTE_CON_PARED_ARRIBA);
-//		ORIENTE_SIN_PARED = new ORIENTE_SIN_PARED(STATES.ORIENTE_SIN_PARED);
-//
-//		// --- CREAMOS EL ARBOL ---
-//
-//		// Asignamos la raiz
-//		this.raiz = TIENES_MURO;
-//
-//		// Tienes muro alrededor?
-//		TIENES_MURO.setYes(TIENES_MURO_IZQUIERDA);
-//		
-//		// Tienes muro a la izquierda?
-//		TIENES_MURO_IZQUIERDA.setYes(TIENES_MURO_ABAJO);
-//		
-//		// Tienes muro abajo?
-//		TIENES_MURO_ABAJO.setYes(TIENES_MURO_DERECHA);
-//		
-//	}
+	public void generaArbol() {
+		
+		// CREAMOS LOS NODOS
+		// DECISION
+		
+		this.orientacion_Sur = new ORIENTACION_SUR();
+			this.tienesMuroIzquierda_Sur = new TIENES_MURO_IZQUIERDA();
+			this.tienesMuroAbajo_Sur = new TIENES_MURO_ABAJO();
+		
+		this.orientacion_Este = new ORIENTACION_ESTE();
+			this.tienesMuroAbajo_Este = new TIENES_MURO_ABAJO();
+			this.tienesMuroDerecha_Este = new TIENES_MURO_DERECHA();
+		
+		this.orientacion_Norte = new ORIENTACION_NORTE();
+			this.tienesMuroDerecha_Norte = new TIENES_MURO_DERECHA();
+			this.tienesMuroArriba1_Norte = new TIENES_MURO_ARRIBA();
+			this.tienesMuroArriba2_Norte = new TIENES_MURO_ARRIBA();
+		
+			this.tienesMuroArriba_Oeste = new TIENES_MURO_ARRIBA();
+			this.tienesMuroIzquierda_Oeste = new TIENES_MURO_IZQUIERDA();
+		
+		// HOJAS
+		this.estadoNorte = new ESTADO_NORTE(STATES.HACIA_NORTE);
+		this.estadoSur = new ESTADO_SUR(STATES.HACIA_SUR);
+		this.estadoEste = new ESTADO_ESTE(STATES.HACIA_ESTE);
+		this.estadoOeste = new ESTADO_OESTE(STATES.HACIA_OESTE);
 
-	private boolean tienesMuro() {
-		Casilla avatar = this.mapa.getAvatar();
+		// PREGUNTAS - ASIGNAMOS EL VALOR DE CADA NODO
+		// Sur
+		this.orientacion_Sur.setYes(this.tienesMuroIzquierda_Sur);
+		this.orientacion_Sur.setNo(this.orientacion_Este);
+			this.tienesMuroIzquierda_Sur.setYes(this.tienesMuroAbajo_Sur);
+			this.tienesMuroIzquierda_Sur.setNo(this.estadoOeste);
+				this.tienesMuroAbajo_Sur.setYes(this.estadoEste);
+				this.tienesMuroAbajo_Sur.setNo(this.estadoSur);
+		// Este
+		this.orientacion_Este.setYes(this.tienesMuroAbajo_Este);
+		this.orientacion_Este.setNo(this.orientacion_Norte);
+			this.tienesMuroAbajo_Este.setYes(this.tienesMuroDerecha_Este);
+			this.tienesMuroAbajo_Este.setNo(this.estadoSur);
+				this.tienesMuroDerecha_Este.setYes(this.estadoNorte);
+				this.tienesMuroDerecha_Este.setNo(this.estadoEste);
+		// Norte
+		this.orientacion_Norte.setYes(this.tienesMuroDerecha_Norte);
+		this.orientacion_Norte.setNo(this.tienesMuroArriba_Oeste);
+			this.tienesMuroDerecha_Norte.setYes(this.tienesMuroArriba1_Norte);
+			this.tienesMuroDerecha_Norte.setNo(this.estadoEste);
+				this.tienesMuroArriba1_Norte.setYes(this.estadoOeste);
+				this.tienesMuroArriba1_Norte.setNo(this.estadoNorte);
+//					this.tienesMuroArriba2_Norte.setYes(this.estadoOeste);
+//					this.tienesMuroArriba2_Norte.setNo(this.estadoEste);
+		// Oeste
+		this.tienesMuroArriba_Oeste.setYes(this.tienesMuroIzquierda_Oeste);
+		this.tienesMuroArriba_Oeste.setNo(this.estadoNorte);
+			this.tienesMuroIzquierda_Oeste.setYes(this.estadoSur);
+			this.tienesMuroIzquierda_Oeste.setNo(this.estadoOeste);
+				
+		// HOJAS - ASIGNAMOS EL VALOR DE CADA NODO
+		this.estadoNorte.setState(STATES.HACIA_NORTE);
+		this.estadoSur.setState(STATES.HACIA_SUR);
+		this.estadoEste.setState(STATES.HACIA_ESTE);
+		this.estadoOeste.setState(STATES.HACIA_OESTE);
 
-		if (this.mapa.getNodo(avatar.getX(), avatar.getY() + 1).getEstado().equals(MURO)
-				|| this.mapa.getNodo(avatar.getX(), avatar.getY() - 1).getEstado().equals(MURO)
-				|| this.mapa.getNodo(avatar.getX() - 1, avatar.getY()).getEstado().equals(MURO)
-				|| this.mapa.getNodo(avatar.getX() + 1, avatar.getY()).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
-	}
+		// --- CREAMOS EL ARBOL ---
 
-	private boolean tienesMuroArriba() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX(), avatar.getY() - 1).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean tienesMuroAbajo() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX(), avatar.getY() + 1).getEstado().equals(MURO)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean tienesMuroIzquierda() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX() - 1, avatar.getY()).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean tienesMuroDerecha() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX() + 1, avatar.getY()).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean tienesDiagonalArribaDerecha() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX() + 1, avatar.getY() - 1).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean tienesDiagonalArribaIzquierda() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX() - 1, avatar.getY() - 1).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean tienesDiagonalAbajoDerecha() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX() + 1, avatar.getY() + 1).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean tienesDiagonalAbajoIzquierda() {
-		Casilla avatar = this.mapa.getAvatar();
-
-		if (this.mapa.getNodo(avatar.getX() - 1, avatar.getY() + 1).getEstado().equals(MURO)) {
-			return true;
-		}
-		return false;
+		// Asignamos la raiz
+		this.raiz = this.orientacion_Sur;
+		
 	}
 
 	public void writeTable(String path) {

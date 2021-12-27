@@ -40,9 +40,9 @@ public class QLearning {
 			readTable(path);
 		}
 
-		this.alpha = 0.9;
+		this.alpha = 0.5;
 		this.gamma = 0.5;
-		this.epsilon = 0.9;
+		this.epsilon = 0.1;
 
 	}
 
@@ -137,8 +137,8 @@ public class QLearning {
 	}
 
 	private void updateVar() {
-		this.alpha = (0.9 * 100000 / (100000 + time));
-		this.epsilon = (0.9 * 100000 / (100000 + time));
+		this.alpha = (0.9 * 1000 / (1000 + time));
+		this.epsilon = (0.9 * 1000 / (1000 + time));
 
 		time++;
 	}

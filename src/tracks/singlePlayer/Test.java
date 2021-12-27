@@ -39,7 +39,7 @@ public class Test {
 
 		// Game and level to play
 		int gameIdx = 15;
-		int levelIdx = 7; // level names from 0 to 4 (game_lvlN.txt).
+		int levelIdx = 6; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 		String level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
@@ -53,13 +53,16 @@ public class Test {
 		// NUESTRO ENTRENAMIENTO
 		// ==============================================================================================================
 
-		String path = "resultados.csv";
-		int M = 10; // Número de partidas
+		/*String path = "resultados.csv";
+		int M = 100; // Número de partidas
 		String[] arrayResult = new String[M + 1];
 		arrayResult[0] = "Partida,Ticks\n";
 		Double[] arrayTicks = new Double[M];
 		for (int i = 0; i < M + 1; i++) {
-			System.out.println("\nPartida actual: " + (i + 1));
+			levelIdx = getRandomNumber(6, 8);
+			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
+			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
+			
 			double[] resultado = ArcadeMachine.runOneGame(game, level1, true
 					, sampleMDPController, recordActionsFile,
 					seed, 0);
@@ -78,7 +81,7 @@ public class Test {
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
-		}
+		}*/
 
 		// ==============================================================================================================
 
@@ -143,40 +146,44 @@ public class Test {
 //			ArcadeMachine.runOneGame(game, level1, true, sampleMDPController, recordActionsFile, seed, 0);
 //		}
 
-		// 8.
-//		double totalPuntos = 0;
-//        double puntos[] = new double[5];
-//        double victorias[] = new double[5];
-//        int numVictorias = 0;
-//
-//        for(int i=0;i<5;i++) {
-//            puntos[i] = 0;
-//            victorias[i] = 0;
-//        }
-//
-//        for(int i=0;i<1;i++) {
-//            levelIdx = 7;
-//            level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
-//            for(int j=0;j<10;j++) {
-//                double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile, seed, 0);
-//                //resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos - resultado[2] -> ticks
-//                totalPuntos = totalPuntos + resultado[1];
-//                puntos[i] = puntos[i] + resultado[1];
-//
-//                if(resultado[0] == 1) {
-//                    numVictorias++;
-//                    victorias[i]++;
-//                }
-//            }
-//        }
-//
-//        //Resultados por nivel
-//        for(int i=0;i<5;i++) {
-//            System.out.println("Nivel: " + (i+1) + " - Victorias: " + (int)victorias[i] + " - Media de Puntos: " + puntos[i]/10);
-//        }
-//
-//        //Resultados totales
-//        System.out.println("Numero Total de Victorias: " + numVictorias + " -- Media Total de Puntos: " + totalPuntos/50);
+		// 8. 
+		double totalPuntos = 0;
+        double puntos[] = new double[10];
+        double victorias[] = new double[10];
+        int numVictorias = 0;
 
+        for(int i=0;i<10;i++) {
+            puntos[i] = 0;
+            victorias[i] = 0;
+        }
+
+        for(int i=0;i<8;i++) {
+            levelIdx = i;
+            level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
+            for(int j=0;j<1;j++) {
+                double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile, seed, 0);
+                //resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos - resultado[2] -> ticks
+                totalPuntos = totalPuntos + resultado[1];
+                puntos[i] = puntos[i] + resultado[1];
+
+                if(resultado[0] == 1) {
+                    numVictorias++;
+                    victorias[i]++;
+                }
+            }
+        }
+
+        //Resultados por nivel
+        for(int i=0;i<5;i++) {
+            System.out.println("Nivel: " + (i+1) + " - Victorias: " + (int)victorias[i] + " - Media de Puntos: " + puntos[i]/10);
+        }
+
+        //Resultados totales
+        System.out.println("Numero Total de Victorias: " + numVictorias + " -- Media Total de Puntos: " + totalPuntos/50);
+
+	}
+	
+	private static int getRandomNumber(int min, int max) {
+	    return (int) ((Math.random() * (max - min)) + min);
 	}
 }
