@@ -4,6 +4,11 @@
 package uhu;
 
 import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -68,6 +73,9 @@ public class Cerebro {
 
 	private double reward;
 	private double globalReward;
+	
+	private int timer;
+	private String pathTimer = "timer.txt";
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -78,8 +86,30 @@ public class Cerebro {
 	 * decision.
 	 * 
 	 * @param percepcion observacion del estado actual.
+	 * @param timer tiempo actual
 	 */
 	public Cerebro(StateObservation percepcion) {
+		File file = new File(this.pathTimer);
+		if (!file.exists()) {
+			initTimer();
+		} else {
+			this.timer = loadTimer();
+		}
+		this.init(percepcion,this.timer);
+	}
+	
+	/**
+	 * Constructor de la clase cerebro que crea un mapa y genera el arbol de
+	 * decision.
+	 * 
+	 * @param percepcion observacion del estado actual.
+	 * @param timer tiempo actual
+	 */
+	public Cerebro(StateObservation percepcion, int timer) {
+		this.init(percepcion,timer);
+	}
+	
+	private void init(StateObservation percepcion, int timer) {
 		Dimension dim = percepcion.getWorldDimension();
 		int bloque = percepcion.getBlockSize();
 
@@ -100,12 +130,13 @@ public class Cerebro {
 			this.orientacion = ORIENTACION.NORTE;
 		}
 
-		this.qlearning = new QLearning(getStates(), getActions(), new String("QTABLE.txt"));
+		this.qlearning = new QLearning(getStates(), getActions(), new String("QTABLE.txt"), timer);
 
 		this.reward = 0;
 		this.globalReward = 0;
 
 		generaArbol();
+
 	}
 
 	// =============================================================================
@@ -127,6 +158,10 @@ public class Cerebro {
 	
 	public ORIENTACION getOrientacion() {
 		return this.orientacion;
+	}
+	
+	public int getTimer() {
+		return this.qlearning.getTimer();
 	}
 
 	// =============================================================================
@@ -359,4 +394,51 @@ public class Cerebro {
 		qlearning.readTable(path);
 	}
 
+	private void initTimer() {
+		this.timer = 0;
+		this.saveTimer();
+	}
+	
+	public void saveTimer() {
+		try {
+			FileWriter fichero;
+//          fichero = new FileWriter(nombre + ".tsp");
+			fichero = new FileWriter(this.pathTimer);
+			String fila = "";
+			fichero.write(Integer.toString(timer) + "\n");
+			fichero.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+	}
+	
+	private int loadTimer() {
+		int t = -1;
+		try {
+			FileReader fichero = new FileReader(this.pathTimer); // FileReader sierve para leer ficheros
+			BufferedReader b = new BufferedReader(fichero); // BufferReader sirve para leer texto de una entrada de
+															// caracteres
+			String aux; // Variable donde guardar las lecturas de fichero de forma momentanea
+			ArrayList<String> stringFichero = new ArrayList<>(); // Almacena cada linea del fichero
+			String[] parts; // Para dividir Strings
+
+			// Mientras pueda leer la siguiente linea, sigue leyendo, hace la asignación
+			// dentro del if
+			while ((aux = b.readLine()) != null) {
+				stringFichero.add(aux);
+			}
+
+			fichero.close();
+			for (int i = 0; i < stringFichero.size(); i++) {
+				aux = stringFichero.get(i);
+				t = Integer.parseInt(aux);
+			}
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+		
+		return t;
+	}
 }

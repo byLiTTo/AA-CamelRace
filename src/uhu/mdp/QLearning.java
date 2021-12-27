@@ -19,7 +19,7 @@ public class QLearning {
 	private double alpha;
 	private double gamma;
 	private double epsilon;
-	private int time = 0;
+	private int timer;
 
 	private double reward;
 
@@ -27,9 +27,10 @@ public class QLearning {
 	private ArrayList<ACTIONS> actions;
 	private double[][] qTable;
 
-	public QLearning(ArrayList<STATES> states, ArrayList<ACTIONS> actions, String path) {
+	public QLearning(ArrayList<STATES> states, ArrayList<ACTIONS> actions, String path, int timer) {
 		this.states = states;
 		this.actions = actions;
+		this.timer = timer;
 
 		this.qTable = new double[states.size()][actions.size()];
 
@@ -44,6 +45,10 @@ public class QLearning {
 		this.gamma = 0.5;
 		this.epsilon = 0.1;
 
+	}
+	
+	public int getTimer() {
+		return this.timer;
 	}
 
 	public ACTIONS update(STATES lastState, ACTIONS lastAction, STATES currentState, double reward) {
@@ -137,10 +142,10 @@ public class QLearning {
 	}
 
 	private void updateVar() {
-		this.alpha = (0.9 * 1000 / (1000 + time));
-		this.epsilon = (0.9 * 1000 / (1000 + time));
+		this.alpha = (0.9 * 1000 / (1000 + timer));
+		this.epsilon = (0.9 * 1000 / (1000 + timer));
 
-		time++;
+		timer++;
 	}
 
 	public ACTIONS nextAction(STATES currentState) {

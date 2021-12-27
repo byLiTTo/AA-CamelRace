@@ -1,6 +1,13 @@
 
 package uhu;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import ontology.Types.ACTIONS;
@@ -14,6 +21,7 @@ import tools.ElapsedCpuTimer;
 public class Agent extends AbstractPlayer {
 
 	private Cerebro c;
+	private int timer;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -28,7 +36,7 @@ public class Agent extends AbstractPlayer {
 	public Agent(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 		this.c = new Cerebro(percepcion);
 	}
-
+	
 	// =============================================================================
 	// METODOS
 	// =============================================================================
@@ -44,8 +52,8 @@ public class Agent extends AbstractPlayer {
 	public ACTIONS act(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 
 		c.percibe(percepcion);
-//		ACTIONS accion = c.entrenar(percepcion);
-		ACTIONS accion = c.pensar(percepcion);
+		ACTIONS accion = c.entrenar(percepcion);
+//		ACTIONS accion = c.pensar(percepcion);
 
 		return accion;
 	}
@@ -53,6 +61,9 @@ public class Agent extends AbstractPlayer {
 	@Override
 	public void result(StateObservation stateObs, ElapsedCpuTimer elapsedCpuTimer) {
 		c.writeTable("QTABLE.txt");
+		c.
 //		System.out.println("PUNTUACION: "+ c.getGR());
 	}
+	
+
 }
