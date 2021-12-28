@@ -193,10 +193,10 @@ public class Cerebro {
 			break;		
 		}
 		
-//		System.out.println("Orientacion: " + this.orientacion);
+		System.out.println("Orientacion: " + this.orientacion);
 		
 		this.mapa.visualiza();
-//		System.out.println("\nEstado: " + this.currentState);
+		System.out.println("\nEstado: " + this.currentState);
 
 		return lastAction;
 	}
@@ -208,6 +208,26 @@ public class Cerebro {
 
 //		System.out.println("\nEstado: " + this.currentState);
 //		System.out.println("\nRECOMPENSA: " + this.globalReward);
+		
+//		System.out.println("Orientacion: " + this.orientacion);
+//		
+//		this.mapa.visualiza();
+//		System.out.println("\nEstado: " + this.currentState);
+
+		switch(this.lastAction) {
+		case ACTION_UP:
+			this.orientacion = ORIENTACION.NORTE;
+			break;
+		case ACTION_DOWN:
+			this.orientacion = ORIENTACION.SUR;
+			break;		
+		case ACTION_RIGHT:
+			this.orientacion = ORIENTACION.ESTE;
+			break;		
+		case ACTION_LEFT:
+			this.orientacion = ORIENTACION.OESTE;
+			break;		
+		}
 
 		return lastAction;
 	}

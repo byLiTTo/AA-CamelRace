@@ -19,7 +19,7 @@ public class QLearning {
 	private double alpha;
 	private double gamma = 0.5;
 	private double epsilon;
-	private double defaultVarInit = 0.9;
+	private double defaultVarInit = 0.5;
 	private int timer;
 
 	private double reward;
@@ -151,9 +151,13 @@ public class QLearning {
 
 	private void updateVar() {
 		this.alpha = (this.defaultVarInit * 10000 / (10000 + timer));
-		this.epsilon = ((this.defaultVarInit-0.4) * 10000 / (10000 + timer));
-//		System.out.println("epsilon: " + this.epsilon);
+			
+		if(timer>5000)
+			this.epsilon = 0;
+		else 
+			this.epsilon = ((this.defaultVarInit) * 10000 / (10000 + timer));
 		
+		System.out.println("epsilon: " + this.epsilon);
 		timer++;
 	}
 
@@ -162,9 +166,9 @@ public class QLearning {
 		double randomNumber = Math.abs(rd.nextDouble());
 
 		if (randomNumber > epsilon) {
-			return getRandomAction();
-		} else {
 			return getBestAction(currentState);
+		} else {
+			return getRandomAction();
 		}
 	}
 

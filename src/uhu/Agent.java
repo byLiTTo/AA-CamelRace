@@ -21,7 +21,6 @@ import tools.ElapsedCpuTimer;
 public class Agent extends AbstractPlayer {
 
 	private Cerebro c;
-	private int timer;
 
 	// =============================================================================
 	// CONSTRUCTORES

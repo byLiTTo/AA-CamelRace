@@ -34,7 +34,7 @@ public class Test {
 		String[][] games = Utils.readGames(spGamesCollection);
 
 		// Game settings
-		boolean visuals = true;
+		boolean visuals = false;
 		int seed = new Random().nextInt();
 
 		// Game and level to play
@@ -61,11 +61,14 @@ public class Test {
 		arrayResult[0] = "Partida,Ticks\n";
 		Double[] arrayTicks = new Double[M];
 		for (int i = 0; i < M + 1; i++) {
+			if(i>-1)
+				visuals = true;
+			
 			levelIdx = getRandomNumber(6, 8);
 			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
 			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
 			
-			double[] resultado = ArcadeMachine.runOneGame(game, level1, false
+			double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals
 					, sampleMDPController, recordActionsFile,
 					seed, 0);
 			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
