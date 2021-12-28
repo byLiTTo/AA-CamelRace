@@ -61,7 +61,7 @@ public class Agent extends AbstractPlayer {
 	@Override
 	public void result(StateObservation stateObs, ElapsedCpuTimer elapsedCpuTimer) {
 		c.writeTable("QTABLE.txt");
-		c.
+		c.saveTimer();
 //		System.out.println("PUNTUACION: "+ c.getGR());
 	}
 	

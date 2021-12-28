@@ -17,8 +17,9 @@ import static uhu.Constantes.*;
 public class QLearning {
 
 	private double alpha;
-	private double gamma;
+	private double gamma = 0.5;
 	private double epsilon;
+	private double defaultVarInit = 0.9;
 	private int timer;
 
 	private double reward;
@@ -26,24 +27,31 @@ public class QLearning {
 	private ArrayList<STATES> states;
 	private ArrayList<ACTIONS> actions;
 	private double[][] qTable;
+	
+	private String pathTimer;
 
-	public QLearning(ArrayList<STATES> states, ArrayList<ACTIONS> actions, String path, int timer) {
+	public QLearning(ArrayList<STATES> states, ArrayList<ACTIONS> actions, String path) {
 		this.states = states;
 		this.actions = actions;
-		this.timer = timer;
 
 		this.qTable = new double[states.size()][actions.size()];
-
-		File file = new File(path);
+		
+		// Para guardar timer
+		this.pathTimer = "timer.txt";
+		File file = new File(this.pathTimer);
+		if (!file.exists()) {
+			this.initTimer();
+		} else {
+			this.loadTimer();
+		}
+		
+		// Para guardar Tabbla-1
+		file = new File(path);
 		if (!file.exists()) {
 			initTable();
 		} else {
 			readTable(path);
 		}
-
-		this.alpha = 0.5;
-		this.gamma = 0.5;
-		this.epsilon = 0.1;
 
 	}
 	
@@ -142,9 +150,10 @@ public class QLearning {
 	}
 
 	private void updateVar() {
-		this.alpha = (0.9 * 1000 / (1000 + timer));
-		this.epsilon = (0.9 * 1000 / (1000 + timer));
-
+		this.alpha = (this.defaultVarInit * 10000 / (10000 + timer));
+		this.epsilon = ((this.defaultVarInit-0.4) * 10000 / (10000 + timer));
+//		System.out.println("epsilon: " + this.epsilon);
+		
 		timer++;
 	}
 
@@ -152,7 +161,7 @@ public class QLearning {
 		Random rd = new Random(System.currentTimeMillis());
 		double randomNumber = Math.abs(rd.nextDouble());
 
-		if (randomNumber < epsilon) {
+		if (randomNumber > epsilon) {
 			return getRandomAction();
 		} else {
 			return getBestAction(currentState);
@@ -243,6 +252,54 @@ public class QLearning {
 			}
 		}
 		System.out.println();
+	}
+	
+	private void initTimer() {
+		this.timer = 0;
+		this.saveTimer();
+	}
+	
+	public void saveTimer() {
+		try {
+			FileWriter fichero;
+//          fichero = new FileWriter(nombre + ".tsp");
+			fichero = new FileWriter(this.pathTimer);
+			String fila = "";
+			fichero.write(Integer.toString(timer) + "\n");
+			fichero.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadTimer() {
+		int t = -1;
+		try {
+			FileReader fichero = new FileReader(this.pathTimer); // FileReader sierve para leer ficheros
+			BufferedReader b = new BufferedReader(fichero); // BufferReader sirve para leer texto de una entrada de
+															// caracteres
+			String aux; // Variable donde guardar las lecturas de fichero de forma momentanea
+			ArrayList<String> stringFichero = new ArrayList<>(); // Almacena cada linea del fichero
+			String[] parts; // Para dividir Strings
+
+			// Mientras pueda leer la siguiente linea, sigue leyendo, hace la asignación
+			// dentro del if
+			while ((aux = b.readLine()) != null) {
+				stringFichero.add(aux);
+			}
+
+			fichero.close();
+			for (int i = 0; i < stringFichero.size(); i++) {
+				aux = stringFichero.get(i);
+				t = Integer.parseInt(aux);
+			}
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+		
+		this.timer = t;
 	}
 
 }
