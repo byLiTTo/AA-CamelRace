@@ -36,7 +36,7 @@ public final class Constantes {
 
 	// MOVIBLES
 	// Camello derecha rapido
-	
+
 	public static final String CAMELLO = "C";
 	public static final int cdr_cate = 6;
 	public static final int cdr_tipo = 6;
@@ -57,12 +57,9 @@ public final class Constantes {
 	public enum SENTIDO {
 		ORIENTE, OCCIDENTE,
 	}
-	
-	public enum ORIENTACION{
-		NORTE,
-		SUR,
-		ESTE,
-		OESTE
+
+	public enum ORIENTACION {
+		NORTE, SUR, ESTE, OESTE
 	}
 
 	public enum STATES {
@@ -70,8 +67,7 @@ public final class Constantes {
 	}
 
 	public enum QUESTIONS {
-		TIENES_MURO_ARRIBA, TIENES_MURO_ABAJO, TIENES_MURO_IZQUIERDA, TIENES_MURO_DERECHA,
-		ORIENTACION_NORTE, ORIENTACION_SUR, ORIENTACION_ESTE, ORIENTACION_OESTE
-
+		TIENES_MURO_ARRIBA, TIENES_MURO_ABAJO, TIENES_MURO_IZQUIERDA, TIENES_MURO_DERECHA, ORIENTACION_NORTE,
+		ORIENTACION_SUR, ORIENTACION_ESTE, ORIENTACION_OESTE, TIENES_MURO_ALREDEDOR
 	}
 }

@@ -59,7 +59,10 @@ public class Cerebro {
 	
 	// Oeste
 	private TIENES_MURO_ARRIBA tienesMuroArriba_Oeste;
-	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Oeste;	
+	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Oeste;
+	
+	// MUROS ALREDEDOR
+	private TIENES_MURO_ALREDEDOR tienesMuroAlrededor;
 	
 	// Nodos hojas - Estados
 	private ESTADO_NORTE estadoNorte;
@@ -316,6 +319,8 @@ public class Cerebro {
 		// CREAMOS LOS NODOS
 		// DECISION
 		
+		this.tienesMuroAlrededor = new TIENES_MURO_ALREDEDOR();
+		
 		this.orientacion_Sur = new ORIENTACION_SUR();
 			this.tienesMuroIzquierda_Sur = new TIENES_MURO_IZQUIERDA();
 			this.tienesMuroAbajo_Sur = new TIENES_MURO_ABAJO();
@@ -339,6 +344,10 @@ public class Cerebro {
 		this.estadoOeste = new ESTADO_OESTE(STATES.HACIA_OESTE);
 
 		// PREGUNTAS - ASIGNAMOS EL VALOR DE CADA NODO
+		// Alrededor
+		this.tienesMuroAlrededor.setYes(this.orientacion_Sur);
+		this.tienesMuroAlrededor.setNo(this.estadoSur);
+		
 		// Sur
 		this.orientacion_Sur.setYes(this.tienesMuroIzquierda_Sur);
 		this.orientacion_Sur.setNo(this.orientacion_Este);
@@ -377,7 +386,8 @@ public class Cerebro {
 		// --- CREAMOS EL ARBOL ---
 
 		// Asignamos la raiz
-		this.raiz = this.orientacion_Sur;
+//		this.raiz = this.orientacion_Sur;
+		this.raiz = this.tienesMuroAlrededor;
 		
 	}
 
