@@ -34,7 +34,7 @@ public class Test {
 		String[][] games = Utils.readGames(spGamesCollection);
 
 		// Game settings
-		boolean visuals = false;
+		boolean visuals = true;
 		int seed = new Random().nextInt();
 
 		// Game and level to play
@@ -64,7 +64,7 @@ public class Test {
 			if(i>-1)
 				visuals = true;
 			
-			levelIdx = getRandomNumber(6, 8);
+			levelIdx = getRandomNumber(6, 9);
 			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
 			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
 			

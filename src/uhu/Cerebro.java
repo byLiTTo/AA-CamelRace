@@ -41,6 +41,11 @@ public class Cerebro {
 	private Nodo raiz;
 
 	// Nodos de decision - Preguntas
+
+	// MUROS ALREDEDOR
+	private TIENES_MURO_ALREDEDOR tienesMuroAlrededor;
+	private TIENES_BLOQUE_ABAJO tienesBloque_Abajo;
+
 	// Sur
 	private ORIENTACION_SUR orientacion_Sur;
 	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Sur;
@@ -56,14 +61,11 @@ public class Cerebro {
 	private TIENES_MURO_DERECHA tienesMuroDerecha_Norte;
 	private TIENES_MURO_ARRIBA tienesMuroArriba1_Norte;
 	private TIENES_MURO_ARRIBA tienesMuroArriba2_Norte;
-	
+
 	// Oeste
 	private TIENES_MURO_ARRIBA tienesMuroArriba_Oeste;
 	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Oeste;
-	
-	// MUROS ALREDEDOR
-	private TIENES_MURO_ALREDEDOR tienesMuroAlrededor;
-	
+
 	// Nodos hojas - Estados
 	private ESTADO_NORTE estadoNorte;
 	private ESTADO_SUR estadoSur;
@@ -86,7 +88,7 @@ public class Cerebro {
 	 * decision.
 	 * 
 	 * @param percepcion observacion del estado actual.
-	 * @param timer tiempo actual
+	 * @param timer      tiempo actual
 	 */
 	public Cerebro(StateObservation percepcion) {
 		Dimension dim = percepcion.getWorldDimension();
@@ -133,11 +135,11 @@ public class Cerebro {
 	public ACTIONS getLastAction() {
 		return this.lastAction;
 	}
-	
+
 	public ORIENTACION getOrientacion() {
 		return this.orientacion;
 	}
-	
+
 	public int getTimer() {
 		return this.qlearning.getTimer();
 	}
@@ -180,24 +182,24 @@ public class Cerebro {
 		this.lastAction = this.qlearning.nextOnlyOneBestAction(currentState);
 //		Casilla a = new Casilla(mapa.getAvatar().getX(), mapa.getAvatar().getY()+1, "$");
 //		this.mapa.setNodo(a);
-		
-		switch(this.lastAction) {
+
+		switch (this.lastAction) {
 		case ACTION_UP:
 			this.orientacion = ORIENTACION.NORTE;
 			break;
 		case ACTION_DOWN:
 			this.orientacion = ORIENTACION.SUR;
-			break;		
+			break;
 		case ACTION_RIGHT:
 			this.orientacion = ORIENTACION.ESTE;
-			break;		
+			break;
 		case ACTION_LEFT:
 			this.orientacion = ORIENTACION.OESTE;
-			break;		
+			break;
 		}
-		
+
 		System.out.println("Orientacion: " + this.orientacion);
-		
+
 		this.mapa.visualiza();
 		System.out.println("\nEstado: " + this.currentState);
 
@@ -211,25 +213,25 @@ public class Cerebro {
 
 //		System.out.println("\nEstado: " + this.currentState);
 //		System.out.println("\nRECOMPENSA: " + this.globalReward);
-		
+
 //		System.out.println("Orientacion: " + this.orientacion);
 //		
 //		this.mapa.visualiza();
 //		System.out.println("\nEstado: " + this.currentState);
 
-		switch(this.lastAction) {
+		switch (this.lastAction) {
 		case ACTION_UP:
 			this.orientacion = ORIENTACION.NORTE;
 			break;
 		case ACTION_DOWN:
 			this.orientacion = ORIENTACION.SUR;
-			break;		
+			break;
 		case ACTION_RIGHT:
 			this.orientacion = ORIENTACION.ESTE;
-			break;		
+			break;
 		case ACTION_LEFT:
 			this.orientacion = ORIENTACION.OESTE;
-			break;		
+			break;
 		}
 
 		return lastAction;
@@ -247,58 +249,58 @@ public class Cerebro {
 		this.reward = -50;
 		Casilla currentCasilla = this.mapa.getAvatar();
 		Casilla lastCasilla = this.mapa.getLastAvatar();
-		
-		switch(lastState) {
+
+		switch (lastState) {
 		case HACIA_NORTE:
-			if(this.checkNorthMovement(lastCasilla.getY(), currentCasilla.getY()))
-				this.reward = 50; 
+			if (this.checkNorthMovement(lastCasilla.getY(), currentCasilla.getY()))
+				this.reward = 50;
 			break;
 		case HACIA_SUR:
-			if(this.checkSouthMovement(lastCasilla.getY(), currentCasilla.getY()))
+			if (this.checkSouthMovement(lastCasilla.getY(), currentCasilla.getY()))
 				this.reward = 50;
 			break;
 		case HACIA_ESTE:
-			if(this.checkEastMovement(lastCasilla.getX(), currentCasilla.getX()))
+			if (this.checkEastMovement(lastCasilla.getX(), currentCasilla.getX()))
 				this.reward = 50;
 			break;
 		case HACIA_OESTE:
-			if(this.checkWestMovement(lastCasilla.getX(), currentCasilla.getX()))
+			if (this.checkWestMovement(lastCasilla.getX(), currentCasilla.getX()))
 				this.reward = 50;
 			break;
 		}
-		
+
 //		System.out.println("Orientacion: " + this.orientacion);
 //		System.out.println("Estado: " + currentState);
 //		System.out.println("Recompensa: " + this.reward);
 //		this.mapa.visualiza();
-		
+
 		return reward;
 
 	}
-	
+
 	private boolean checkNorthMovement(int a, int b) {
-		if((a-b) > 0)
+		if ((a - b) > 0)
 			return true;
 		else
 			return false;
 	}
-	
+
 	private boolean checkSouthMovement(int a, int b) {
-		if((a-b) < 0)
+		if ((a - b) < 0)
 			return true;
 		else
 			return false;
 	}
-	
+
 	private boolean checkEastMovement(int a, int b) {
-		if((b-a) > 0)
+		if ((b - a) > 0)
 			return true;
 		else
 			return false;
 	}
-	
+
 	private boolean checkWestMovement(int a, int b) {
-		if((b-a) < 0)
+		if ((b - a) < 0)
 			return true;
 		else
 			return false;
@@ -306,7 +308,8 @@ public class Cerebro {
 
 	private ArrayList<STATES> getStates() {
 		// CAMINODERECHA, CAMINOABAJO, CAMINOARRIBA, CAMINOATRAS
-		return new ArrayList<STATES>(Arrays.asList(STATES.HACIA_NORTE, STATES.HACIA_SUR, STATES.HACIA_ESTE, STATES.HACIA_OESTE));
+		return new ArrayList<STATES>(
+				Arrays.asList(STATES.HACIA_NORTE, STATES.HACIA_SUR, STATES.HACIA_ESTE, STATES.HACIA_OESTE));
 	}
 
 	private ArrayList<ACTIONS> getActions() {
@@ -320,6 +323,7 @@ public class Cerebro {
 		// DECISION
 		
 		this.tienesMuroAlrededor = new TIENES_MURO_ALREDEDOR();
+		this.tienesBloque_Abajo = new TIENES_BLOQUE_ABAJO();
 		
 		this.orientacion_Sur = new ORIENTACION_SUR();
 			this.tienesMuroIzquierda_Sur = new TIENES_MURO_IZQUIERDA();
@@ -347,12 +351,17 @@ public class Cerebro {
 		// Alrededor
 		this.tienesMuroAlrededor.setYes(this.orientacion_Sur);
 		this.tienesMuroAlrededor.setNo(this.estadoSur);
+//			this.tienesBloque_Abajo.setYes(this.estadoEste);
+//			this.tienesBloque_Abajo.setNo(this.estadoSur);
 		
 		// Sur
 		this.orientacion_Sur.setYes(this.tienesMuroIzquierda_Sur);
 		this.orientacion_Sur.setNo(this.orientacion_Este);
 			this.tienesMuroIzquierda_Sur.setYes(this.tienesMuroAbajo_Sur);
-			this.tienesMuroIzquierda_Sur.setNo(this.estadoOeste);
+			this.tienesMuroIzquierda_Sur.setNo(this.tienesBloque_Abajo);
+				this.tienesBloque_Abajo.setYes(this.estadoEste);
+				this.tienesBloque_Abajo.setNo(this.estadoOeste);
+				
 				this.tienesMuroAbajo_Sur.setYes(this.estadoEste);
 				this.tienesMuroAbajo_Sur.setNo(this.estadoSur);
 		// Este
@@ -398,7 +407,7 @@ public class Cerebro {
 	public void readTable(String path) {
 		qlearning.readTable(path);
 	}
-	
+
 	public void saveTimer() {
 		this.qlearning.saveTimer();
 	}
