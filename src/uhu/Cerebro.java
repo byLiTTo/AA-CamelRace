@@ -24,8 +24,9 @@ import uhu.mdp.QLearning;
 import static uhu.Constantes.*;
 
 /**
- * @author LiTTo
- *
+ * Clase que se encarga de analizar el entorno en el que se encuentra el agente y de seleccionar que acción tiene que realizar el mismo
+ * @author Carlos Garcia Silva
+ * @author Daniel Perez Rodriguez
  */
 public class Cerebro {
 
@@ -41,11 +42,6 @@ public class Cerebro {
 	private Nodo raiz;
 
 	// Nodos de decision - Preguntas
-
-	// MUROS ALREDEDOR
-	private TIENES_MURO_ALREDEDOR tienesMuroAlrededor;
-	private TIENES_BLOQUE_ABAJO tienesBloque_Abajo;
-
 	// Sur
 	private ORIENTACION_SUR orientacion_Sur;
 	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Sur;
@@ -59,13 +55,15 @@ public class Cerebro {
 	// Norte
 	private ORIENTACION_NORTE orientacion_Norte;
 	private TIENES_MURO_DERECHA tienesMuroDerecha_Norte;
-	private TIENES_MURO_ARRIBA tienesMuroArriba1_Norte;
-	private TIENES_MURO_ARRIBA tienesMuroArriba2_Norte;
-
+	private TIENES_MURO_ARRIBA tienesMuroArriba_Norte;
+	
 	// Oeste
 	private TIENES_MURO_ARRIBA tienesMuroArriba_Oeste;
 	private TIENES_MURO_IZQUIERDA tienesMuroIzquierda_Oeste;
-
+	
+	// MUROS ALREDEDOR
+	private TIENES_MURO_ALREDEDOR tienesMuroAlrededor;
+	
 	// Nodos hojas - Estados
 	private ESTADO_NORTE estadoNorte;
 	private ESTADO_SUR estadoSur;
@@ -73,7 +71,6 @@ public class Cerebro {
 	private ESTADO_OESTE estadoOeste;
 
 	private ACTIONS lastAction;
-	private SENTIDO sentido;
 	private ORIENTACION orientacion;
 
 	private double reward;
@@ -86,9 +83,8 @@ public class Cerebro {
 	/**
 	 * Constructor de la clase cerebro que crea un mapa y genera el arbol de
 	 * decision.
-	 * 
 	 * @param percepcion observacion del estado actual.
-	 * @param timer      tiempo actual
+	 * @param timer tiempo actual
 	 */
 	public Cerebro(StateObservation percepcion) {
 		Dimension dim = percepcion.getWorldDimension();
@@ -97,14 +93,12 @@ public class Cerebro {
 		this.mapa = new Mapa(dim.width / bloque, dim.height / bloque, bloque, percepcion);
 
 		if (this.mapa.getAvatar().getX() - this.mapa.getColumnaPortal() < 0) {
-//			this.sentido = SENTIDO.ORIENTE;
 			this.lastAction = ACTIONS.ACTION_DOWN;
 			this.currentState = STATES.HACIA_SUR;
 			this.lastState = STATES.HACIA_SUR;
 			this.orientacion = ORIENTACION.SUR;
 
 		} else {
-//			this.sentido = SENTIDO.OCCIDENTE;
 			this.lastAction = ACTIONS.ACTION_UP;
 			this.currentState = STATES.HACIA_NORTE;
 			this.lastState = STATES.HACIA_NORTE;
@@ -124,22 +118,33 @@ public class Cerebro {
 	// =============================================================================
 
 	/**
-	 * Devuelve el mapa que tiene el cerebro en su memoria.
-	 * 
+	 * Devuelve el mapa que tiene el cerebro en su memoria. 
 	 * @return Mapa generado.
 	 */
 	public Mapa getMapa() {
 		return this.mapa;
 	}
-
+	
+	/**
+	 * Devuelve la última acción realizada
+	 * @return Devuelve una acción
+	 */
 	public ACTIONS getLastAction() {
 		return this.lastAction;
 	}
-
+	
+	/**
+	 * Devuelve la orientación del agente
+	 * @return Devuelve una orientación
+	 */
 	public ORIENTACION getOrientacion() {
 		return this.orientacion;
 	}
-
+	
+	/**
+	 * Devuelve el timer actual
+	 * @return Devuelve el número de ticks jugados por el agente
+	 */
 	public int getTimer() {
 		return this.qlearning.getTimer();
 	}
@@ -148,95 +153,94 @@ public class Cerebro {
 	// METODOS
 	// =============================================================================
 
+	/**
+	 * Analiza el mapa y actualiza el estado
+	 * @param percepcion Percepción del juego
+	 */
 	public void percibe(StateObservation percepcion) {
 		analizarMapa(percepcion);
 		actualizaState(percepcion);
 	}
 
 	/**
+	 * Analiza el mapa del juego
 	 * @param percepcion Observacion del estado actual.
 	 */
 	private void analizarMapa(StateObservation percepcion) {
 		this.mapa.actualiza(percepcion, Visualizaciones.NADA);
 	}
 
+	/**
+	 * Actualiza el estado
+	 * @param percepcion Percepción del juego
+	 */
 	private void actualizaState(StateObservation percepcion) {
-//		System.out.println("Antes de actualizar");
-//		System.out.println("lastState: " + lastState);
-//		System.out.println("currentState: " + currentState);
-//		this.currentState = this.raiz.decidir(this);
 		this.lastState = this.currentState;
 		this.currentState = this.raiz.decidir(this);
-//		System.out.println("\nDespues de actualizar");
-//		System.out.println("lastState: " + lastState);
-//		System.out.println("currentState: " + currentState);
-
 	}
 
 	/**
 	 * Recorre el arbol de decision y devuelve una accion a realizar.
-	 * 
 	 * @return Accion a realizar tras recorrer los nodos el arbol.
 	 */
 	public ACTIONS pensar(StateObservation percepcion) {
 		this.lastAction = this.qlearning.nextOnlyOneBestAction(currentState);
-//		Casilla a = new Casilla(mapa.getAvatar().getX(), mapa.getAvatar().getY()+1, "$");
-//		this.mapa.setNodo(a);
-
-		switch (this.lastAction) {
+		
+		switch(this.lastAction) {
 		case ACTION_UP:
 			this.orientacion = ORIENTACION.NORTE;
 			break;
 		case ACTION_DOWN:
 			this.orientacion = ORIENTACION.SUR;
-			break;
+			break;		
 		case ACTION_RIGHT:
 			this.orientacion = ORIENTACION.ESTE;
-			break;
+			break;		
 		case ACTION_LEFT:
 			this.orientacion = ORIENTACION.OESTE;
-			break;
+			break;		
 		}
-
+		
 		System.out.println("Orientacion: " + this.orientacion);
-
+		
 		this.mapa.visualiza();
 		System.out.println("\nEstado: " + this.currentState);
 
 		return lastAction;
 	}
 
+	/**
+	 * Entrena el agente para que aprenda a jugar a través del algoritmo Q-learning
+	 * @param percepcion Percepción del juego
+	 * @return Devuelve una acción
+	 */
 	public ACTIONS entrenar(StateObservation percepcion) {
 		double reward = getReward(lastState, lastAction, currentState);
 		this.qlearning.update(lastState, lastAction, currentState, reward);
 		this.lastAction = this.qlearning.nextAction(currentState);
 
-//		System.out.println("\nEstado: " + this.currentState);
-//		System.out.println("\nRECOMPENSA: " + this.globalReward);
-
-//		System.out.println("Orientacion: " + this.orientacion);
-//		
-//		this.mapa.visualiza();
-//		System.out.println("\nEstado: " + this.currentState);
-
-		switch (this.lastAction) {
+		switch(this.lastAction) {
 		case ACTION_UP:
 			this.orientacion = ORIENTACION.NORTE;
 			break;
 		case ACTION_DOWN:
 			this.orientacion = ORIENTACION.SUR;
-			break;
+			break;		
 		case ACTION_RIGHT:
 			this.orientacion = ORIENTACION.ESTE;
-			break;
+			break;		
 		case ACTION_LEFT:
 			this.orientacion = ORIENTACION.OESTE;
-			break;
+			break;		
 		}
 
 		return lastAction;
 	}
 
+	/**
+	 * Devuelve la recomensa total obtenida por el agente
+	 * @return Devuelve la recompensa total
+	 */
 	public double getGR() {
 		return this.globalReward;
 	}
@@ -245,85 +249,120 @@ public class Cerebro {
 	// AUXILIARES
 	// =============================================================================
 
+	/**
+	 * Calcula la recompensa para la última acción realizada
+	 * @param lastState Estado anterior
+	 * @param lastAction Última acción realizada
+	 * @param currentState Estado actual
+	 * @return Devuelve la recompensa calculada
+	 */
 	private double getReward(STATES lastState, ACTIONS lastAction, STATES currentState) {
 		this.reward = -50;
 		Casilla currentCasilla = this.mapa.getAvatar();
 		Casilla lastCasilla = this.mapa.getLastAvatar();
-
-		switch (lastState) {
+		
+		switch(lastState) {
 		case HACIA_NORTE:
-			if (this.checkNorthMovement(lastCasilla.getY(), currentCasilla.getY()))
-				this.reward = 50;
+			if(this.checkNorthMovement(lastCasilla.getY(), currentCasilla.getY()))
+				this.reward = 50; 
 			break;
 		case HACIA_SUR:
-			if (this.checkSouthMovement(lastCasilla.getY(), currentCasilla.getY()))
+			if(this.checkSouthMovement(lastCasilla.getY(), currentCasilla.getY()))
 				this.reward = 50;
 			break;
 		case HACIA_ESTE:
-			if (this.checkEastMovement(lastCasilla.getX(), currentCasilla.getX()))
+			if(this.checkEastMovement(lastCasilla.getX(), currentCasilla.getX()))
 				this.reward = 50;
 			break;
 		case HACIA_OESTE:
-			if (this.checkWestMovement(lastCasilla.getX(), currentCasilla.getX()))
+			if(this.checkWestMovement(lastCasilla.getX(), currentCasilla.getX()))
 				this.reward = 50;
 			break;
 		}
-
-//		System.out.println("Orientacion: " + this.orientacion);
-//		System.out.println("Estado: " + currentState);
-//		System.out.println("Recompensa: " + this.reward);
-//		this.mapa.visualiza();
-
+		
 		return reward;
 
 	}
-
+	
+	/**
+	 * Comprueba si el agente se ha movido hacia el norte
+	 * @param a Posición Y de la última casilla
+	 * @param b Posición Y de la casilla actual
+	 * @return Devuelve true si el agente se mueve hacia el norte. False en caso contrario
+	 */
 	private boolean checkNorthMovement(int a, int b) {
-		if ((a - b) > 0)
+		if((a-b) > 0)
 			return true;
 		else
 			return false;
 	}
-
+	
+	/**
+	 * Comprueba si el agente se ha movido hacia el sur
+	 * @param a Posición Y de la última casilla
+	 * @param b Posición Y de la casilla actual
+	 * @return Devuelve true si el agente se mueve hacia el sur. False en caso contrario
+	 */
 	private boolean checkSouthMovement(int a, int b) {
-		if ((a - b) < 0)
+		if((a-b) < 0)
 			return true;
 		else
 			return false;
 	}
-
+	
+	/**
+	 * Comprueba si el agente se ha movido hacia el este
+	 * @param a Posición X de la última casilla
+	 * @param b Posición X de la casilla actual
+	 * @return Devuelve true si el agente se mueve hacia el este. False en caso contrario
+	 */
 	private boolean checkEastMovement(int a, int b) {
-		if ((b - a) > 0)
+		if((b-a) > 0)
 			return true;
 		else
 			return false;
 	}
-
+	
+	/**
+	 * Comprueba si el agente se ha movido hacia el oeste
+	 * @param a Posición X de la última casilla
+	 * @param b Posición X de la casilla actual
+	 * @return Devuelve true si el agente se mueve hacia el oeste. False en caso contrario
+	 */
 	private boolean checkWestMovement(int a, int b) {
-		if ((b - a) < 0)
+		if((b-a) < 0)
 			return true;
 		else
 			return false;
 	}
 
+	/**
+	 * Devuelve los estados en los que se puede encontrar el agente
+	 * @return Devuelve un ArrayList con los estados
+	 */
 	private ArrayList<STATES> getStates() {
 		// CAMINODERECHA, CAMINOABAJO, CAMINOARRIBA, CAMINOATRAS
-		return new ArrayList<STATES>(
-				Arrays.asList(STATES.HACIA_NORTE, STATES.HACIA_SUR, STATES.HACIA_ESTE, STATES.HACIA_OESTE));
+		return new ArrayList<STATES>(Arrays.asList(STATES.HACIA_NORTE, STATES.HACIA_SUR, STATES.HACIA_ESTE, STATES.HACIA_OESTE));
 	}
 
+	/**
+	 * Devuelve las acciones que puede realizar al agente
+	 * @return Devuelve un ArrayList con las acciones
+	 */
 	private ArrayList<ACTIONS> getActions() {
 		return new ArrayList<ACTIONS>(
 				Arrays.asList(ACTIONS.ACTION_UP, ACTIONS.ACTION_DOWN, ACTIONS.ACTION_LEFT, ACTIONS.ACTION_RIGHT));
 	}
-
-	public void generaArbol() {
+	
+	/**
+	 * Crea el arbol de decisión del agente 
+	 */
+	private void generaArbol() {
 		
 		// CREAMOS LOS NODOS
 		// DECISION
 		
 		this.tienesMuroAlrededor = new TIENES_MURO_ALREDEDOR();
-		this.tienesBloque_Abajo = new TIENES_BLOQUE_ABAJO();
 		
 		this.orientacion_Sur = new ORIENTACION_SUR();
 			this.tienesMuroIzquierda_Sur = new TIENES_MURO_IZQUIERDA();
@@ -335,8 +374,7 @@ public class Cerebro {
 		
 		this.orientacion_Norte = new ORIENTACION_NORTE();
 			this.tienesMuroDerecha_Norte = new TIENES_MURO_DERECHA();
-			this.tienesMuroArriba1_Norte = new TIENES_MURO_ARRIBA();
-			this.tienesMuroArriba2_Norte = new TIENES_MURO_ARRIBA();
+			this.tienesMuroArriba_Norte = new TIENES_MURO_ARRIBA();
 		
 			this.tienesMuroArriba_Oeste = new TIENES_MURO_ARRIBA();
 			this.tienesMuroIzquierda_Oeste = new TIENES_MURO_IZQUIERDA();
@@ -351,17 +389,12 @@ public class Cerebro {
 		// Alrededor
 		this.tienesMuroAlrededor.setYes(this.orientacion_Sur);
 		this.tienesMuroAlrededor.setNo(this.estadoSur);
-//			this.tienesBloque_Abajo.setYes(this.estadoEste);
-//			this.tienesBloque_Abajo.setNo(this.estadoSur);
 		
 		// Sur
 		this.orientacion_Sur.setYes(this.tienesMuroIzquierda_Sur);
 		this.orientacion_Sur.setNo(this.orientacion_Este);
 			this.tienesMuroIzquierda_Sur.setYes(this.tienesMuroAbajo_Sur);
-			this.tienesMuroIzquierda_Sur.setNo(this.tienesBloque_Abajo);
-				this.tienesBloque_Abajo.setYes(this.estadoEste);
-				this.tienesBloque_Abajo.setNo(this.estadoOeste);
-				
+			this.tienesMuroIzquierda_Sur.setNo(this.estadoOeste);
 				this.tienesMuroAbajo_Sur.setYes(this.estadoEste);
 				this.tienesMuroAbajo_Sur.setNo(this.estadoSur);
 		// Este
@@ -374,12 +407,10 @@ public class Cerebro {
 		// Norte
 		this.orientacion_Norte.setYes(this.tienesMuroDerecha_Norte);
 		this.orientacion_Norte.setNo(this.tienesMuroArriba_Oeste);
-			this.tienesMuroDerecha_Norte.setYes(this.tienesMuroArriba1_Norte);
+			this.tienesMuroDerecha_Norte.setYes(this.tienesMuroArriba_Norte);
 			this.tienesMuroDerecha_Norte.setNo(this.estadoEste);
-				this.tienesMuroArriba1_Norte.setYes(this.estadoOeste);
-				this.tienesMuroArriba1_Norte.setNo(this.estadoNorte);
-//					this.tienesMuroArriba2_Norte.setYes(this.estadoOeste);
-//					this.tienesMuroArriba2_Norte.setNo(this.estadoEste);
+				this.tienesMuroArriba_Norte.setYes(this.estadoOeste);
+				this.tienesMuroArriba_Norte.setNo(this.estadoNorte);
 		// Oeste
 		this.tienesMuroArriba_Oeste.setYes(this.tienesMuroIzquierda_Oeste);
 		this.tienesMuroArriba_Oeste.setNo(this.estadoNorte);
@@ -395,19 +426,29 @@ public class Cerebro {
 		// --- CREAMOS EL ARBOL ---
 
 		// Asignamos la raiz
-//		this.raiz = this.orientacion_Sur;
 		this.raiz = this.tienesMuroAlrededor;
 		
 	}
 
+	/**
+	 * Guarda la tabla-Q del agente en un fichero
+	 * @param path Ruta donde guardar la tabla
+	 */
 	public void writeTable(String path) {
 		qlearning.writeTable(path);
 	}
 
+	/**
+	 * Lee la tabla-Q guardada en un fichero
+	 * @param path Ruta donde leer la tabla
+	 */
 	public void readTable(String path) {
 		qlearning.readTable(path);
 	}
-
+	
+	/**
+	 * Guarda el valor del timer en un fichero
+	 */
 	public void saveTimer() {
 		this.qlearning.saveTimer();
 	}
