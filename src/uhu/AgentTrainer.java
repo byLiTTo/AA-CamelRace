@@ -1,13 +1,6 @@
 
 package uhu;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import ontology.Types.ACTIONS;
@@ -18,7 +11,7 @@ import tools.ElapsedCpuTimer;
  * @author Daniel Perez Rodriguez
  *
  */
-public class Agent extends AbstractPlayer {
+public class AgentTrainer extends AbstractPlayer {
 
 	private Cerebro c;
 
@@ -32,10 +25,10 @@ public class Agent extends AbstractPlayer {
 	 * @param percepcion   Observacion del estado actual.
 	 * @param elapsedTimer Temporizador para la creacion del controlador.
 	 */
-	public Agent(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
+	public AgentTrainer(StateObservation percepcion, ElapsedCpuTimer elapsedTimer) {
 		this.c = new Cerebro(percepcion);
 	}
-	
+
 	// =============================================================================
 	// METODOS
 	// =============================================================================
@@ -52,7 +45,6 @@ public class Agent extends AbstractPlayer {
 
 		c.percibe(percepcion);
 		ACTIONS accion = c.entrenar(percepcion);
-//		ACTIONS accion = c.pensar(percepcion);
 
 		return accion;
 	}
@@ -63,6 +55,5 @@ public class Agent extends AbstractPlayer {
 		c.saveTimer();
 //		System.out.println("PUNTUACION: "+ c.getGR());
 	}
-	
 
 }

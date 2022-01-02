@@ -27,7 +27,8 @@ public class Test {
 		String sampleRHEAController = "tracks.singlePlayer.advanced.sampleRHEA.Agent";
 		String sampleOLETSController = "tracks.singlePlayer.advanced.olets.Agent";
 
-		String sampleMDPController = "uhu.Agent";
+		String sampleMDPController = "uhu.AgentPlayer";
+		String sampleMDPControllerTrainer = "uhu.AgentTrainer";
 
 		// Load available games
 		String spGamesCollection = "examples/all_games_sp.csv";
@@ -49,47 +50,54 @@ public class Test {
 		// where to record the actions
 		// executed. null if not to save.
 
+		for (int i = 0; i < 18; i++) {
+			levelIdx = i;
+			for (int j = 0; j < 2; j++) {
+				level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
+				ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile, seed, 0);
+			}
+		}
+
 		// ==============================================================================================================
 		// NUESTRO ENTRENAMIENTO
 		// ==============================================================================================================
 
 		// Entrenamiento ----------------------------------------
-		
-		String path = "resultados.csv";
-		int M = 100; // Número de partidas
-		String[] arrayResult = new String[M + 1];
-		arrayResult[0] = "Partida,Ticks\n";
-		Double[] arrayTicks = new Double[M];
-		for (int i = 0; i < M + 1; i++) {
-			if(i>-1)
-				visuals = true;
-			
-			levelIdx = getRandomNumber(6, 9);
-			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
-			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
-			
-			double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals
-					, sampleMDPController, recordActionsFile,
-					seed, 0);
-			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
-			// resultado[2] -> ticks
-			arrayResult[i] = i + "," + resultado[2] + "\n";
-		}
 
-		// Creamos fichero
-		try {
-			FileWriter myWriter = new FileWriter(path);
-			for (int i = 0; i < M + 1; i++)
-				myWriter.write(arrayResult[i]);
+//		String path = "resultados.csv";
+//		int M = 100; // Número de partidas
+//		String[] arrayResult = new String[M + 1];
+//		arrayResult[0] = "Partida,Ticks\n";
+//		Double[] arrayTicks = new Double[M];
+//		for (int i = 0; i < M + 1; i++) {
+//			if (i > -1)
+//				visuals = true;
+//
+//			levelIdx = getRandomNumber(6, 9);
+//			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
+//			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
+//
+//			double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile,
+//					seed, 0);
+//			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
+//			// resultado[2] -> ticks
+//			arrayResult[i] = i + "," + resultado[2] + "\n";
+//		}
+//
+//		// Creamos fichero
+//		try {
+//			FileWriter myWriter = new FileWriter(path);
+//			for (int i = 0; i < M + 1; i++)
+//				myWriter.write(arrayResult[i]);
+//
+//			myWriter.close();
+//		} catch (IOException e) {
+//			System.out.println("An error occurred.");
+//			e.printStackTrace();
+//		}
 
-			myWriter.close();
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}
-		
 		// Practica ----------------------------------------
-		
+
 //		double totalPuntos = 0;
 //        double puntos[] = new double[10];
 //        double victorias[] = new double[10];
@@ -180,8 +188,8 @@ public class Test {
 //		}
 
 	}
-	
+
 	private static int getRandomNumber(int min, int max) {
-	    return (int) ((Math.random() * (max - min)) + min);
+		return (int) ((Math.random() * (max - min)) + min);
 	}
 }
