@@ -69,6 +69,10 @@ public class Cerebro {
 	private ESTADO_SUR estadoSur;
 	private ESTADO_ESTE estadoEste;
 	private ESTADO_OESTE estadoOeste;
+	//-----------------------------
+	private ESTADO Estado_1, Estado_2, Estado_3, Estado_4, Estado_5, Estado_6, Estado_7,
+					Estado_8, Estado_9, Estado_10, Estado_11, Estado_12, Estado_13;
+	
 
 	private ACTIONS lastAction;
 	private ORIENTACION orientacion;
@@ -94,14 +98,14 @@ public class Cerebro {
 
 		if (this.mapa.getAvatar().getX() - this.mapa.getColumnaPortal() < 0) {
 			this.lastAction = ACTIONS.ACTION_DOWN;
-			this.currentState = STATES.HACIA_SUR;
-			this.lastState = STATES.HACIA_SUR;
+			this.currentState = STATES.ESTADO_2;
+			this.lastState = STATES.ESTADO_2;
 			this.orientacion = ORIENTACION.SUR;
 
 		} else {
 			this.lastAction = ACTIONS.ACTION_UP;
-			this.currentState = STATES.HACIA_NORTE;
-			this.lastState = STATES.HACIA_NORTE;
+			this.currentState = STATES.ESTADO_8;
+			this.lastState = STATES.ESTADO_8;
 			this.orientacion = ORIENTACION.NORTE;
 		}
 
@@ -262,19 +266,28 @@ public class Cerebro {
 		Casilla lastCasilla = this.mapa.getLastAvatar();
 		
 		switch(lastState) {
-		case HACIA_NORTE:
+		case ESTADO_4:
+		case ESTADO_8:
+		case ESTADO_12:
 			if(this.checkNorthMovement(lastCasilla.getY(), currentCasilla.getY()))
 				this.reward = 50; 
 			break;
-		case HACIA_SUR:
+		case ESTADO_2:
+		case ESTADO_6:
+		case ESTADO_10:
+		case ESTADO_13:
 			if(this.checkSouthMovement(lastCasilla.getY(), currentCasilla.getY()))
 				this.reward = 50;
 			break;
-		case HACIA_ESTE:
+		case ESTADO_1:
+		case ESTADO_5:
+		case ESTADO_9:
 			if(this.checkEastMovement(lastCasilla.getX(), currentCasilla.getX()))
 				this.reward = 50;
 			break;
-		case HACIA_OESTE:
+		case ESTADO_3:
+		case ESTADO_7:
+		case ESTADO_11:
 			if(this.checkWestMovement(lastCasilla.getX(), currentCasilla.getX()))
 				this.reward = 50;
 			break;
@@ -342,7 +355,9 @@ public class Cerebro {
 	 */
 	private ArrayList<STATES> getStates() {
 		// CAMINODERECHA, CAMINOABAJO, CAMINOARRIBA, CAMINOATRAS
-		return new ArrayList<STATES>(Arrays.asList(STATES.HACIA_NORTE, STATES.HACIA_SUR, STATES.HACIA_ESTE, STATES.HACIA_OESTE));
+		return new ArrayList<STATES>(Arrays.asList(STATES.ESTADO_1, STATES.ESTADO_2, STATES.ESTADO_3, 
+				STATES.ESTADO_4, STATES.ESTADO_5, STATES.ESTADO_6, STATES.ESTADO_7, STATES.ESTADO_8,
+				STATES.ESTADO_9, STATES.ESTADO_10, STATES.ESTADO_11, STATES.ESTADO_12, STATES.ESTADO_13));
 	}
 
 	/**
@@ -380,48 +395,57 @@ public class Cerebro {
 			this.tienesMuroIzquierda_Oeste = new TIENES_MURO_IZQUIERDA();
 		
 		// HOJAS
-		this.estadoNorte = new ESTADO_NORTE(STATES.HACIA_NORTE);
-		this.estadoSur = new ESTADO_SUR(STATES.HACIA_SUR);
-		this.estadoEste = new ESTADO_ESTE(STATES.HACIA_ESTE);
-		this.estadoOeste = new ESTADO_OESTE(STATES.HACIA_OESTE);
+//		this.estadoNorte = new ESTADO_NORTE(STATES.HACIA_NORTE);
+//		this.estadoSur = new ESTADO_SUR(STATES.HACIA_SUR);
+//		this.estadoEste = new ESTADO_ESTE(STATES.HACIA_ESTE);
+//		this.estadoOeste = new ESTADO_OESTE(STATES.HACIA_OESTE);
+		//-------------------------------------------------------
+		this.Estado_1 = new ESTADO(STATES.ESTADO_1);
+		this.Estado_2 = new ESTADO(STATES.ESTADO_2);
+		this.Estado_3 = new ESTADO(STATES.ESTADO_3);
+		this.Estado_4 = new ESTADO(STATES.ESTADO_4);
+		this.Estado_5 = new ESTADO(STATES.ESTADO_5);
+		this.Estado_6 = new ESTADO(STATES.ESTADO_6);
+		this.Estado_7 = new ESTADO(STATES.ESTADO_7);
+		this.Estado_8 = new ESTADO(STATES.ESTADO_8);
+		this.Estado_9 = new ESTADO(STATES.ESTADO_9);
+		this.Estado_10 = new ESTADO(STATES.ESTADO_10);
+		this.Estado_11 = new ESTADO(STATES.ESTADO_11);
+		this.Estado_12 = new ESTADO(STATES.ESTADO_12);
+		this.Estado_13 = new ESTADO(STATES.ESTADO_13);
 
 		// PREGUNTAS - ASIGNAMOS EL VALOR DE CADA NODO
 		// Alrededor
 		this.tienesMuroAlrededor.setYes(this.orientacion_Sur);
-		this.tienesMuroAlrededor.setNo(this.estadoSur);
+		this.tienesMuroAlrededor.setNo(this.Estado_13);
 		
 		// Sur
 		this.orientacion_Sur.setYes(this.tienesMuroIzquierda_Sur);
 		this.orientacion_Sur.setNo(this.orientacion_Este);
 			this.tienesMuroIzquierda_Sur.setYes(this.tienesMuroAbajo_Sur);
-			this.tienesMuroIzquierda_Sur.setNo(this.estadoOeste);
-				this.tienesMuroAbajo_Sur.setYes(this.estadoEste);
-				this.tienesMuroAbajo_Sur.setNo(this.estadoSur);
+			this.tienesMuroIzquierda_Sur.setNo(this.Estado_3);
+				this.tienesMuroAbajo_Sur.setYes(this.Estado_1);
+				this.tienesMuroAbajo_Sur.setNo(this.Estado_2);
 		// Este
 		this.orientacion_Este.setYes(this.tienesMuroAbajo_Este);
 		this.orientacion_Este.setNo(this.orientacion_Norte);
 			this.tienesMuroAbajo_Este.setYes(this.tienesMuroDerecha_Este);
-			this.tienesMuroAbajo_Este.setNo(this.estadoSur);
-				this.tienesMuroDerecha_Este.setYes(this.estadoNorte);
-				this.tienesMuroDerecha_Este.setNo(this.estadoEste);
+			this.tienesMuroAbajo_Este.setNo(this.Estado_6);
+				this.tienesMuroDerecha_Este.setYes(this.Estado_4);
+				this.tienesMuroDerecha_Este.setNo(this.Estado_5);
 		// Norte
 		this.orientacion_Norte.setYes(this.tienesMuroDerecha_Norte);
 		this.orientacion_Norte.setNo(this.tienesMuroArriba_Oeste);
 			this.tienesMuroDerecha_Norte.setYes(this.tienesMuroArriba_Norte);
-			this.tienesMuroDerecha_Norte.setNo(this.estadoEste);
-				this.tienesMuroArriba_Norte.setYes(this.estadoOeste);
-				this.tienesMuroArriba_Norte.setNo(this.estadoNorte);
+			this.tienesMuroDerecha_Norte.setNo(this.Estado_9);
+				this.tienesMuroArriba_Norte.setYes(this.Estado_7);
+				this.tienesMuroArriba_Norte.setNo(this.Estado_8);
 		// Oeste
 		this.tienesMuroArriba_Oeste.setYes(this.tienesMuroIzquierda_Oeste);
-		this.tienesMuroArriba_Oeste.setNo(this.estadoNorte);
-			this.tienesMuroIzquierda_Oeste.setYes(this.estadoSur);
-			this.tienesMuroIzquierda_Oeste.setNo(this.estadoOeste);
+		this.tienesMuroArriba_Oeste.setNo(this.Estado_12);
+			this.tienesMuroIzquierda_Oeste.setYes(this.Estado_10);
+			this.tienesMuroIzquierda_Oeste.setNo(this.Estado_11);
 				
-		// HOJAS - ASIGNAMOS EL VALOR DE CADA NODO
-		this.estadoNorte.setState(STATES.HACIA_NORTE);
-		this.estadoSur.setState(STATES.HACIA_SUR);
-		this.estadoEste.setState(STATES.HACIA_ESTE);
-		this.estadoOeste.setState(STATES.HACIA_OESTE);
 
 		// --- CREAMOS EL ARBOL ---
 

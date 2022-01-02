@@ -170,10 +170,10 @@ public class QLearning {
 	private void updateVar() {
 		this.alpha = (this.defaultVarInit * 10000 / (10000 + timer));
 			
-		if(timer>5000)
-			this.epsilon = 0;
-		else 
-			this.epsilon = ((this.defaultVarInit) * 10000 / (10000 + timer));
+//		if(timer>5000)
+//			this.epsilon = 0;
+//		else 
+		this.epsilon = ((this.defaultVarInit) * 10000 / (10000 + timer));
 		
 		System.out.println("epsilon: " + this.epsilon);
 		timer++;
