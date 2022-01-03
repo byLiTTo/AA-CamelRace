@@ -2,6 +2,7 @@ package tracks.singlePlayer;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Random;
 
 import core.logging.Logger;
@@ -66,13 +67,13 @@ public class Test {
 
 		visuals = false;
 		String path = "resultados.csv";
-		int M = 200; // Número de partidas
+		int M = 25; // Número de partidas
 		String[] arrayResult = new String[M + 1];
 		arrayResult[0] = "Partida,Ticks\n";
 		Double[] arrayTicks = new Double[M];
 		for (int i = 0; i < M + 1; i++) {
-			if (i > 195)
-				visuals = true;
+			if (i > M-2)
+				visuals = false;
 
 			levelIdx = getRandomNumber(16, 18);
 			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
@@ -97,6 +98,26 @@ public class Test {
 			e.printStackTrace();
 		}
 
+		visuals = true;
+		int numeroMapas = 8;
+		double victorias[] = new double[numeroMapas];
+		float victoriasTotales = 0;
+		for (int i = 0; i < numeroMapas; i++) {
+			levelIdx = i+8;
+			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
+			double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile, seed, 0);
+			//resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos - resultado[2] -> ticks
+			victorias[i] = resultado[0];
+			victoriasTotales += resultado[0]; 
+		}
+		
+		System.out.println("Victorias Totales: " + victoriasTotales);
+		System.out.println("Porcentaje de victorias en test: " + ((victoriasTotales/(float)numeroMapas)*100) + "%");
+		System.out.println("----Resultados por mapa----");
+		for(int i=0;i<numeroMapas;i++) {
+			System.out.println("Mapa_"+(i+1)+": " + Double.toString(victorias[i]));
+		}
+		
 		// Practica ----------------------------------------
 
 //		double totalPuntos = 0;
