@@ -25,7 +25,7 @@ public class QLearning {
 	private double alpha; // Porcentaje de aprendizaje en cada tick
 	private double gamma = 0.5; // Porcentaje para tener en cuenta la siguiente acción con mejor resultado. (Mejora las acciones a largo plazo)
 	private double epsilon; // Porcentaje de acciones aleatorias
-	private double defaultVarInit = 0.5;
+	private double defaultVarInit = 0.9;
 	private int timer;
 
 	private double reward;
@@ -168,12 +168,13 @@ public class QLearning {
 	 * aleatorias y aprenderá menos con cada acción
 	 */
 	private void updateVar() {
-		this.alpha = (this.defaultVarInit * 10000 / (10000 + timer));
+		double k = 100; 
+		this.alpha = (this.defaultVarInit * k / (k + timer));
 			
 //		if(timer>5000)
 //			this.epsilon = 0;
 //		else 
-		this.epsilon = ((this.defaultVarInit) * 10000 / (10000 + timer));
+		this.epsilon = ((this.defaultVarInit) * k / (k + timer));
 		
 		System.out.println("epsilon: " + this.epsilon);
 		timer++;
@@ -376,6 +377,25 @@ public class QLearning {
 		}
 		
 		this.timer = t;
+	}
+	
+	public void saveEpsilon(String path) {
+		try {
+			FileWriter fichero;
+			File file = new File(path);
+			if (!file.exists()) {
+				fichero = new FileWriter(path);
+				fichero.write(Double.toString(this.epsilon) + "\n");
+				fichero.close();
+			} else {
+				fichero = new FileWriter(path, true);
+				fichero.write(Double.toString(this.epsilon) + "\n");
+				fichero.close();
+			}
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
 	}
 
 }

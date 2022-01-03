@@ -53,6 +53,7 @@ public class AgentTrainer extends AbstractPlayer {
 	public void result(StateObservation stateObs, ElapsedCpuTimer elapsedCpuTimer) {
 		c.writeTable("QTABLE.txt");
 		c.saveTimer();
+		c.saveEpsilon("Epsilon.csv");
 //		System.out.println("PUNTUACION: "+ c.getGR());
 	}
 

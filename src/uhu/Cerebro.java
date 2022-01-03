@@ -65,11 +65,6 @@ public class Cerebro {
 	private TIENES_MURO_ALREDEDOR tienesMuroAlrededor;
 	
 	// Nodos hojas - Estados
-	private ESTADO_NORTE estadoNorte;
-	private ESTADO_SUR estadoSur;
-	private ESTADO_ESTE estadoEste;
-	private ESTADO_OESTE estadoOeste;
-	//-----------------------------
 	private ESTADO Estado_1, Estado_2, Estado_3, Estado_4, Estado_5, Estado_6, Estado_7,
 					Estado_8, Estado_9, Estado_10, Estado_11, Estado_12, Estado_13;
 	
@@ -79,6 +74,8 @@ public class Cerebro {
 
 	private double reward;
 	private double globalReward;
+	private int racha = 1;
+	private Casilla nextToLastCasilla = null;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -265,6 +262,7 @@ public class Cerebro {
 		Casilla currentCasilla = this.mapa.getAvatar();
 		Casilla lastCasilla = this.mapa.getLastAvatar();
 		
+		
 		switch(lastState) {
 		case ESTADO_4:
 		case ESTADO_8:
@@ -294,7 +292,6 @@ public class Cerebro {
 		}
 		
 		return reward;
-
 	}
 	
 	/**
@@ -475,5 +472,9 @@ public class Cerebro {
 	 */
 	public void saveTimer() {
 		this.qlearning.saveTimer();
+	}
+	
+	public void saveEpsilon(String path) {
+		this.qlearning.saveEpsilon(path);
 	}
 }
