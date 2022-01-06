@@ -28,7 +28,8 @@ public class QLearning {
 	private double epsilonInicial = -1;
 	private double defaultVarInit = 0.9;
 	private int timer;
-
+	double k = 10000;
+	
 	private double reward;
 
 	private ArrayList<STATES> states;
@@ -169,8 +170,7 @@ public class QLearning {
 	 * Actualiza las variables alpha y epsilon en función del timer(ticks). A medida que aumente el timer, las acciones serán menos
 	 * aleatorias y aprenderá menos con cada acción
 	 */
-	private void updateVar() {
-		double k = 1000; 
+	private void updateVar() {; 
 		this.alpha = (this.defaultVarInit * k / (k + timer));
 		this.epsilon = ((this.defaultVarInit) * k / (k + timer));
 		if(this.epsilonInicial == -1)

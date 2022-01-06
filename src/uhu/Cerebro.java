@@ -74,8 +74,6 @@ public class Cerebro {
 
 	private double reward;
 	private double globalReward;
-	private int racha = 1;
-	private Casilla nextToLastCasilla = null;
 
 	// =============================================================================
 	// CONSTRUCTORES
@@ -273,7 +271,6 @@ public class Cerebro {
 		case ESTADO_2:
 		case ESTADO_6:
 		case ESTADO_10:
-		case ESTADO_13:
 			if(this.checkSouthMovement(lastCasilla.getY(), currentCasilla.getY()))
 				this.reward = 50;
 			break;
@@ -354,7 +351,7 @@ public class Cerebro {
 		// CAMINODERECHA, CAMINOABAJO, CAMINOARRIBA, CAMINOATRAS
 		return new ArrayList<STATES>(Arrays.asList(STATES.ESTADO_1, STATES.ESTADO_2, STATES.ESTADO_3, 
 				STATES.ESTADO_4, STATES.ESTADO_5, STATES.ESTADO_6, STATES.ESTADO_7, STATES.ESTADO_8,
-				STATES.ESTADO_9, STATES.ESTADO_10, STATES.ESTADO_11, STATES.ESTADO_12, STATES.ESTADO_13));
+				STATES.ESTADO_9, STATES.ESTADO_10, STATES.ESTADO_11, STATES.ESTADO_12));
 	}
 
 	/**
@@ -409,12 +406,8 @@ public class Cerebro {
 		this.Estado_10 = new ESTADO(STATES.ESTADO_10);
 		this.Estado_11 = new ESTADO(STATES.ESTADO_11);
 		this.Estado_12 = new ESTADO(STATES.ESTADO_12);
-		this.Estado_13 = new ESTADO(STATES.ESTADO_13);
 
 		// PREGUNTAS - ASIGNAMOS EL VALOR DE CADA NODO
-		// Alrededor
-		this.tienesMuroAlrededor.setYes(this.orientacion_Sur);
-		this.tienesMuroAlrededor.setNo(this.Estado_13);
 		
 		// Sur
 		this.orientacion_Sur.setYes(this.tienesMuroIzquierda_Sur);

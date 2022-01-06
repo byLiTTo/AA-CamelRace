@@ -67,7 +67,7 @@ public class Test {
 
 //		visuals = false;
 //		String path = "resultados.csv";
-//		int M = 100; // Número de partidas
+//		int M = 25; // Número de partidas
 //		String[] arrayResult = new String[M + 1];
 //		arrayResult[0] = "Partida,Ticks,Ticks Norm\n";
 //		Double[] arrayTicks = new Double[M];
