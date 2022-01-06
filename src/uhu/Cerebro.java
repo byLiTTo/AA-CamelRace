@@ -447,7 +447,7 @@ public class Cerebro {
 		// --- CREAMOS EL ARBOL ---
 
 		// Asignamos la raiz
-		this.raiz = this.tienesMuroAlrededor;
+		this.raiz = this.orientacion_Sur;
 		
 	}
 

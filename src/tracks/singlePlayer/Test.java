@@ -65,45 +65,45 @@ public class Test {
 
 		// Entrenamiento ----------------------------------------
 
-		visuals = false;
-		String path = "resultados.csv";
-		int M = 25; // Número de partidas
-		String[] arrayResult = new String[M + 1];
-		arrayResult[0] = "Partida,Ticks\n";
-		Double[] arrayTicks = new Double[M];
-		for (int i = 0; i < M + 1; i++) {
-			if (i > M-2)
-				visuals = false;
-
-			levelIdx = getRandomNumber(16, 18);
-			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
-			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
-
-			double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPControllerTrainer, recordActionsFile,
-					seed, 0);
-			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
-			// resultado[2] -> ticks
-			arrayResult[i] = i + "," + resultado[2] + "\n";
-		}
-
-		// Creamos fichero
-		try {
-			FileWriter myWriter = new FileWriter(path);
-			for (int i = 0; i < M + 1; i++)
-				myWriter.write(arrayResult[i]);
-
-			myWriter.close();
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}
+//		visuals = false;
+//		String path = "resultados.csv";
+//		int M = 100; // Número de partidas
+//		String[] arrayResult = new String[M + 1];
+//		arrayResult[0] = "Partida,Ticks,Ticks Norm\n";
+//		Double[] arrayTicks = new Double[M];
+//		for (int i = 0; i < M + 1; i++) {
+//			if (i > M-2)
+//				visuals = false;
+//
+//			levelIdx = getRandomNumber(16, 18);
+//			System.out.println("\nPartida actual: " + (i + 1) + " - Nivel: " + levelIdx);
+//			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
+//
+//			double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPControllerTrainer, recordActionsFile,
+//					seed, 0);
+//			// resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos -
+//			// resultado[2] -> ticks
+//			arrayResult[i] = i + "," + resultado[2] + "," + (1-resultado[2]/2000) + "\n";
+//		}
+//
+//		// Creamos fichero
+//		try {
+//			FileWriter myWriter = new FileWriter(path);
+//			for (int i = 0; i < M + 1; i++)
+//				myWriter.write(arrayResult[i]);
+//
+//			myWriter.close();
+//		} catch (IOException e) {
+//			System.out.println("An error occurred.");
+//			e.printStackTrace();
+//		}
 
 		visuals = true;
-		int numeroMapas = 8;
+		int numeroMapas = 12;
 		double victorias[] = new double[numeroMapas];
 		float victoriasTotales = 0;
 		for (int i = 0; i < numeroMapas; i++) {
-			levelIdx = i+8;
+			levelIdx = i+4;
 			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
 			double[] resultado = ArcadeMachine.runOneGame(game, level1, visuals, sampleMDPController, recordActionsFile, seed, 0);
 			//resultado[0] -> indica la victoria(1 o 0) - resultado[1] -> puntos - resultado[2] -> ticks

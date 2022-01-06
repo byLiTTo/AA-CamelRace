@@ -170,7 +170,7 @@ public class QLearning {
 	 * aleatorias y aprenderá menos con cada acción
 	 */
 	private void updateVar() {
-		double k = 5000; 
+		double k = 1000; 
 		this.alpha = (this.defaultVarInit * k / (k + timer));
 		this.epsilon = ((this.defaultVarInit) * k / (k + timer));
 		if(this.epsilonInicial == -1)
